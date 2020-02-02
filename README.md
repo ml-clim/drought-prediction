@@ -1,3 +1,5 @@
+This repo was cloned from [`ml_drought`](https://github.com/esowc/ml_drought) on Feb 2 2020.
+
 <!-- ![](https://imgur.com/8qjbXcD) -->
 [![Build Status](https://travis-ci.com/esowc/ml_drought.svg?branch=master)](https://travis-ci.com/esowc/ml_drought)
 
