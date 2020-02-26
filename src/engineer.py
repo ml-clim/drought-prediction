@@ -256,17 +256,6 @@ class Engineer:
                         self._save(xy_test, year=year, month=month, dataset_type="test")
         return train_ds
 
-    def _stratify_xy(
-        self,
-        ds: xr.Dataset,
-        year: int,
-        target_variable: str,
-        target_month: int,
-        pred_months: int,
-        expected_length: Optional[int],
-    ) -> Tuple[Optional[Dict[str, xr.Dataset]], date]:
-        raise NotImplementedError
-
     @staticmethod
     def _get_datetime(time: np.datetime64) -> date:
         return datetime.strptime(time.astype(str)[:10], "%Y-%m-%d").date()
