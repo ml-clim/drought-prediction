@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Engineer &#8212; ml_clim  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Datasets" href="datasets.html" />
+    <link rel="prev" title="Preprocessor" href="preprocessor.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datasets.html" title="Datasets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="preprocessor.html" title="Preprocessor"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="engineer">
+<h1>Engineer<a class="headerlink" href="#engineer" title="Permalink to this headline">¶</a></h1>
+<p>The engineer class works to create <em>train</em> and <em>test</em> data. It reads in processed
+data, and writes out <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">y)</span></code> pairs. This class allows the nature of the input
+and output variables to be defined.</p>
+<hr class="docutils" />
+<span class="target" id="module-src.engineer"></span><dl class="class">
+<dt id="src.engineer.Engineer">
+<em class="property">class </em><code class="sig-prename descclassname">src.engineer.</code><code class="sig-name descname">Engineer</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">process_static: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.engineer.Engineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the output of the processors, and turns it into <cite>NetCDF</cite> files
+ready to be input into the machine learning models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_folder</strong> – The location of the data folder.</p></li>
+<li><p><strong>process_static</strong> – Defines whether or not to process the static data.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.engineer.Engineer.engineer">
+<code class="sig-name descname">engineer</code><span class="sig-paren">(</span><em class="sig-param">test_year: Union[int, List[int]], target_variable: str = 'VHI', pred_months: int = 12, expected_length: Optional[int] = 12</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.engineer.Engineer.engineer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the engineer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_year</strong> – Years of data to use as test data. Only data from before
+<code class="docutils literal notranslate"><span class="pre">min(test_year)</span></code> will be used for training data.</p></li>
+<li><p><strong>target_variable</strong> – The target variable. Must be in one of the processed
+files. Default: <code class="docutils literal notranslate"><span class="pre">&quot;VHI&quot;</span></code>.</p></li>
+<li><p><strong>pred_months</strong> – The number of months to use as input to the model.
+Default: <code class="docutils literal notranslate"><span class="pre">12</span></code> (a year’s worth of data).</p></li>
+<li><p><strong>expected_length</strong> – The expected length of the output sequence (e.g. if
+the data was processed to weekly timesteps, then we might expect
+<code class="docutils literal notranslate"><span class="pre">expected_length</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">pred_months</span></code>). If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, any sequence which does not have this
+length (e.g. due to missing data) will be skipped.
+Default: <code class="docutils literal notranslate"><span class="pre">12</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3><a href="index.html">ml_clim</a></h3>
+<p class="caption"><span class="caption-text">Getting started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Developing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pipeline:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/engineer.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datasets.html" title="Datasets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="preprocessor.html" title="Preprocessor"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Thomas Lees, Gabriel Tseng.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+    </div>
+  </body>
+</html>

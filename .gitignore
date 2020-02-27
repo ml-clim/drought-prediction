@@ -42,3 +42,6 @@ switch_data_dirs.sh
 .vscode
 # vscode options
 settings.json
+
+# sphinx build
+docsrc/_build/

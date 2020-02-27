@@ -205,27 +205,13 @@ class CDSExporter(BaseExporter):
 
 
 class ERA5Exporter(CDSExporter):
-    """Exports ERA5 data from the Climate Data Store
+    r"""Exports ERA5 data from the Climate Data Store
 
-    cds.climate.copernicus.eu
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
     """
 
     @staticmethod
     def get_era5_times(granularity: str = "hourly") -> Dict:
-        """Returns the era5 selection request arguments
-        for the hourly or monthly data
-
-        Parameters
-        ----------
-        granularity: str, {'monthly', 'hourly'}, default: 'hourly'
-            The granularity of data being pulled
-
-        Returns
-        ----------
-        selection_dict: dict
-            A dictionary with all the time-related arguments of the
-            selection dict filled out
-        """
         years = [str(year) for year in range(1979, 2019 + 1)]
         months = ["{:02d}".format(month) for month in range(1, 12 + 1)]
         days = ["{:02d}".format(day) for day in range(1, 31 + 1)]
@@ -315,36 +301,25 @@ class ERA5Exporter(CDSExporter):
         break_up: bool = False,
         n_parallel_requests: int = 1,
     ) -> List[Path]:
-        """ Export functionality to prepare the API request and to send it to
-        the cdsapi.client() object.
+        """ Prepare the API request and to send it to
+        the cdsapi.client() object. Save the downloaded data.
 
-        Arguments:
-        ---------
-        variable: str
-            The variable to be exported
-        dataset: Optional[str], default = None
-            The dataset from which to pull the variable from. If None, this
-            is inferred from the dataset and its granularity
-        granularity: str: {'hourly', 'monthly'}, default = 'hourly'
-            The temporal resolution of the data to be pulled
-        show_api_request: bool = True
-            Whether to print the selection dictionary before making the API request
-        selection_request: Optional[Dict], default = None
-            Selection request arguments to be merged with the defaults. If both a key is
-            defined in both the selection_request and the defaults, the value in the
-            selection_request takes precedence.
-        break_up: bool, default = True
-            The best way to download the data is by making many small calls to the CDS
-            API. If true, the calls will be broken up into months
-        parallel: bool, default = True
-            Whether to download data in parallel
-        n_parallel_requests:
-            How many parallel requests to the CDSAPI to make
+        :param variable: The variable to be exported
+        :param dataset: The dataset from which to pull the variable from. If None, this
+            is inferred from the dataset and its granularity. Default = ``None``.
+        :param granularity: One of ``{"hourly", "monthly"}``. The granularity of the
+            data being pulled. Default: ``"hourly"``
+        :param show_api_request: Whether to print the selection dictionary before making the API request
+            Default = ``True``.
+        :param selection_request: Selection request arguments to be merged with the defaults. If both a key is
+            defined in both the selection_request and the defaults, the value in the selection_request
+            takes precedence. Default = ``None``.
+        :param break_up: The best way to download the data is by making many small calls to the CDS
+            API. If true, the calls will be broken up into months. We have not found this necessary
+            even when downloading 30 years of data. Default = ``False``.
+        :param n_parallel_requests: How many parallel requests to the CDSAPI to make. Default = ``1``.
 
-        Returns:
-        -------
-        output_files: List of pathlib.Paths
-            paths to the downloaded data
+        :return: A list of paths to the downloaded data
         """
 
         # create the default template for the selection request

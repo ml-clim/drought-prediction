@@ -13,6 +13,13 @@ from typing import cast, DefaultDict, Dict, List, Optional, Union, Tuple
 
 
 class Engineer:
+    r"""Takes the output of the processors, and turns it into `NetCDF` files
+    ready to be input into the machine learning models.
+
+    :param data_folder: The location of the data folder.
+    :param process_static: Defines whether or not to process the static data.
+    """
+
     name: str = "one_month_forecast"
 
     def __init__(
@@ -47,6 +54,20 @@ class Engineer:
         pred_months: int = 12,
         expected_length: Optional[int] = 12,
     ) -> None:
+        r"""Runs the engineer.
+
+        :param test_year: Years of data to use as test data. Only data from before
+            ``min(test_year)`` will be used for training data.
+        :param target_variable: The target variable. Must be in one of the processed
+            files. Default: ``"VHI"``.
+        :param pred_months: The number of months to use as input to the model.
+            Default: ``12`` (a year's worth of data).
+        :param expected_length: The expected length of the output sequence (e.g. if
+            the data was processed to weekly timesteps, then we might expect
+            ``expected_length = 4 * pred_months``). If not ``None``, any sequence which does not have this
+            length (e.g. due to missing data) will be skipped.
+            Default: ``12``.
+        """
 
         self.process_dynamic(test_year, target_variable, pred_months, expected_length)
         if self._process_static:
