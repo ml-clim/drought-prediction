@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Preprocessor &#8212; ml_clim  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Engineer" href="engineer.html" />
+    <link rel="prev" title="Exporters" href="exporters.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="engineer.html" title="Engineer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="exporters.html" title="Exporters"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="preprocessor">
+<h1>Preprocessor<a class="headerlink" href="#preprocessor" title="Permalink to this headline">¶</a></h1>
+<p>The Preprocessors work to convert the datasets downloaded by the Exporters into a
+<strong>unified data format</strong>. This makes testing and developing models much more straightforward.</p>
+<p>As with the Exporters, a unique Preprocessor must be written for each dataset.</p>
+<p>All preprocessors extend the following base Preprocessor, which has some useful helper methods:</p>
+<hr class="docutils" />
+<dl class="class">
+<dt id="src.preprocess.base.BasePreProcessor">
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.base.</code><code class="sig-name descname">BasePreProcessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">output_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.base.BasePreProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base for all pre-processor classes. The preprocessing classes
+are responsible for taking the raw data exports and normalizing them
+so that they can be ingested by the feature engineering class.</p>
+<p>This involves:</p>
+<ul class="simple">
+<li><p>subsetting the ROI (default is Kenya)</p></li>
+<li><p>regridding to a consistent spatial grid (pixel size / resolution)</p></li>
+<li><p>resampling to a consistent time step (hourly, daily, monthly)</p></li>
+<li><p>assigning coordinates to <cite>.nc</cite> files (latitude, longitude, time)</p></li>
+</ul>
+<p>All pre-processors should do this in a <code class="docutils literal notranslate"><span class="pre">process</span></code> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default = <code class="docutils literal notranslate"><span class="pre">Path(&quot;data&quot;)</span></code>.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.preprocess.base.BasePreProcessor.chop_roi">
+<em class="property">static </em><code class="sig-name descname">chop_roi</code><span class="sig-paren">(</span><em class="sig-param">ds: xarray.core.dataset.Dataset</em>, <em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">inverse_lat: bool = False</em><span class="sig-paren">)</span> &#x2192; xarray.core.dataset.Dataset<a class="headerlink" href="#src.preprocess.base.BasePreProcessor.chop_roi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a geographical subset of the data, based on a subset string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> – The dataset to be subsetted.</p></li>
+<li><p><strong>subset_str</strong> – Defines a geographical subset of the downloaded data to be used.
+Should be one of the regions defined in <code class="docutils literal notranslate"><span class="pre">src.utils.region_lookup</span></code>.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;kenya&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Inverse_lat</dt>
+<dd class="field-even"><p>Whether to inverse the minimum and maximum longitudes. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.preprocess.base.BasePreProcessor.load_reference_grid">
+<em class="property">static </em><code class="sig-name descname">load_reference_grid</code><span class="sig-paren">(</span><em class="sig-param">path_to_grid: pathlib.Path</em><span class="sig-paren">)</span> &#x2192; xarray.core.dataset.Dataset<a class="headerlink" href="#src.preprocess.base.BasePreProcessor.load_reference_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Since the regridder only needs to the lat and lon values,
+there is no need to pass around an enormous grid for the regridding.</p>
+<p>In fact, only the latitude and longitude values are necessary!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path_to_grid</strong> – A path to the reference dataset.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The loaded reference dataset, but with only the latitudes and longitudes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.preprocess.base.BasePreProcessor.merge_files">
+<code class="sig-name descname">merge_files</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">filename: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.base.BasePreProcessor.merge_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge multiple interim files into a single preprocessed file. The time resampling happens here,
+since all the data is necessary to do that.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
+Only used to make a more descriptive filename.</p></li>
+<li><p><strong>resample_length</strong> – Defines the time length to which the data will be resampled.</p></li>
+<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
+nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>filename</strong> – Override the default created filename by passing a <code class="docutils literal notranslate"><span class="pre">string</span></code> filename here.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.preprocess.base.BasePreProcessor.regrid">
+<code class="sig-name descname">regrid</code><span class="sig-paren">(</span><em class="sig-param">ds: xarray.core.dataset.Dataset</em>, <em class="sig-param">reference_ds: xarray.core.dataset.Dataset</em>, <em class="sig-param">method: str = 'nearest_s2d'</em>, <em class="sig-param">reuse_weights: bool = False</em>, <em class="sig-param">clean: bool = True</em><span class="sig-paren">)</span> &#x2192; xarray.core.dataset.Dataset<a class="headerlink" href="#src.preprocess.base.BasePreProcessor.regrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use xEMSF package to regrid ds to the same grid as reference_ds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> – The dataset to be regridded</p></li>
+<li><p><strong>reference_ds</strong> – The reference dataset, onto which <cite>ds</cite> will be regridded</p></li>
+<li><p><strong>method</strong> – One of <code class="docutils literal notranslate"><span class="pre">{&quot;bilinear&quot;,</span> <span class="pre">&quot;conservative&quot;,</span> <span class="pre">&quot;nearest_s2d&quot;,</span> <span class="pre">&quot;nearest_d2s&quot;,</span> <span class="pre">&quot;patch&quot;}</span></code>.
+The method applied for the regridding</p></li>
+<li><p><strong>reuse_weights</strong> – Whether to reuse the weights (weights must already be saved).
+May speed up the regridder. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>clean</strong> – Whether to delete the weight file. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The regridded dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3><a href="index.html">ml_clim</a></h3>
+<p class="caption"><span class="caption-text">Getting started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Developing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pipeline:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/preprocessor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="engineer.html" title="Engineer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="exporters.html" title="Exporters"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Thomas Lees, Gabriel Tseng.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+    </div>
+  </body>
+</html>

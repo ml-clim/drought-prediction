@@ -1,11 +1,11 @@
-.. role:: hidden
-    :class: hidden-section
-
 Engineer
 =========
 
-The engineer takes the output of the processed data, and turns it into
-`NetCDF` files ready to be input into the machine learning models.
+The engineer class works to create *train* and *test* data. It reads in processed
+data, and writes out ``(X, y)`` pairs. This class allows the nature of the input
+and output variables to be defined.
+
+====
 
 .. automodule:: src.engineer
    :members:

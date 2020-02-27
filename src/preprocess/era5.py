@@ -12,11 +12,19 @@ from ..utils import get_modal_value_across_time
 
 class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
 
+    r"""A processor for data downloaded by `src.exporters.cds.ERA5Exporter`.
+
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
+    """
+
     dataset = "reanalysis-era5-single-levels-monthly-means"
 
     # some ERA5 variables need to be treated statically
     # they are recorded here
     static_vars = ["soil_type"]
+
+    def __init__(self, data_folder: Path = Path("data")) -> None:
+        super().__init__(data_folder=data_folder, output_name=None)
 
     @staticmethod
     def create_filename(
@@ -80,7 +88,7 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
                     outfiles.append(filepath)
         return outfiles
 
-    def get_filepaths(
+    def _get_filepaths(
         self, folder: str = "raw", filter_type: Optional[str] = None
     ) -> List[Path]:
         """
@@ -105,7 +113,7 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
     ) -> None:
 
         # first, dynamic
-        dynamic_filepaths = self.get_filepaths("interim", filter_type="dynamic")
+        dynamic_filepaths = self._get_filepaths("interim", filter_type="dynamic")
         if len(dynamic_filepaths) > 0:
             ds_dyn = xr.open_mfdataset(dynamic_filepaths)
 
@@ -122,7 +130,7 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
             print(f"\n**** {out} Created! ****\n")
 
         # then, static
-        static_filepaths = self.get_filepaths("interim", filter_type="static")
+        static_filepaths = self._get_filepaths("interim", filter_type="static")
         print(static_filepaths)
         if len(static_filepaths) > 0:
             ds_stat = xr.open_mfdataset(static_filepaths)
@@ -156,30 +164,24 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
         parallel: bool = False,
         cleanup: bool = True,
     ) -> None:
-        """ Preprocess all of the era5 POS .nc files to produce
+        r""" Preprocess all of the exported era5 .nc files to produce
         one subset file.
 
-        Arguments
-        ----------
-        subset_str: Optional[str] = 'kenya'
-            Whether to subset Kenya when preprocessing
-        regrid: Optional[Path] = None
-            If a Path is passed, the CHIRPS files will be regridded to have the same
-            grid as the dataset at that Path. If None, no regridding happens
-        resample_time: str = 'M'
-            If not None, defines the time length to which the data will be resampled
-        upsampling: bool = False
-            If true, tells the class the time-sampling will be upsampling. In this case,
-            nearest instead of mean is used for the resampling
-        parallel: bool = True
-            If true, run the preprocessing in parallel
-        cleanup: bool = True
-            If true, delete interim files created by the class
+        :param subset_str: Defines a geographical subset of the downloaded data to be used.
+            Should be one of the regions defined in ``src.utils.region_lookup``.
+            Default = ``"kenya"``.
+        :param regrid: If a Path is passed, the output files will be regridded to have the same
+            spatial grid as the dataset at that Path. If None, no regridding happens. Default = ``None``.
+        :param resample_time: If not None, defines the time length to which the data will be resampled.
+        :param upsampling: If true, tells the class the time-sampling will be upsampling. In this case,
+            nearest instead of mean is used for the resampling. Default = ``False``.
+        :param parallel: If true, run the preprocessing in parallel. Default = ``True``.
+        :param cleanup: If true, delete interim files created by the class. Default = ``True``.
         """
         print(f"Reading data from {self.raw_folder}. Writing to {self.interim}")
 
         # get the filepaths for all of the downloaded data
-        nc_files = self.get_filepaths()
+        nc_files = self._get_filepaths()
 
         if regrid is not None:
             regrid = self.load_reference_grid(regrid)

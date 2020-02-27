@@ -7,12 +7,13 @@ __all__ = ["BaseExporter", "Region", "get_kenya"]
 
 
 class BaseExporter:
-    """Base for all exporter classes
+    r"""Base for all exporter classes. It creates the appropriate
+    directory in the data dir (``data_dir/{dataset}``).
 
-    Attributes:
-    ----------
-    data_folder: Path, default: Path('data')
-        The location of the data folder.
+    Parameters:
+    ~~~~~~~~~~~
+        ``data_folder (pathlib.Path, optional)``: The location of the data folder.
+            Default: ``pathlib.Path("data")``
     """
 
     dataset: Optional[str] = None

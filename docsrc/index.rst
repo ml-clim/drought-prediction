@@ -14,20 +14,26 @@ These tasks are split into the different classes defined in the `src` folder, an
 
 .. image:: ../img/pipeline_overview.png
   :width: 500
-  :alt: Alternative text
+  :alt: Pipeline overview
 
 Some basic working knowledge of Python is required to use this pipeline, although it is not too onerous.
 
-Overview
----------
-
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting started:
+
+   install
+   develop
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Pipeline:
 
    data
-   engineer
    exporters
+   preprocessor
+   engineer
+   datasets
 
 .. * :ref:`search`
 .. * :ref:`genindex`

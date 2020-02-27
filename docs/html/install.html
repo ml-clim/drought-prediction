@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Installation &#8212; ml_clim  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developing" href="develop.html" />
+    <link rel="prev" title="A Machine Learning Pipeline for Climate Science" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="develop.html" title="Developing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="A Machine Learning Pipeline for Climate Science"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://www.anaconda.com/download/#macos">Anaconda</a> running python 3.7 is used as the package manager. To get set up
+with an environment, install Anaconda from the link above, and (from this directory) run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda env create -f environment.yml
+</pre></div>
+</div>
+<p>This will create an environment named <cite>esowc-drought</cite> with all the necessary packages to run the code. To
+activate this environment, run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate esowc-drought
+</pre></div>
+</div>
+<p><a class="reference external" href="https://www.docker.com/">Docker</a> can also be used to run this code. To do this, first
+run the docker app (either <a class="reference external" href="https://www.docker.com/products/docker-desktop">docker desktop</a>
+or configure the <cite>docker-machine</cite>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># on macOS</span>
+brew install docker-machine docker
+
+docker-machine create --driver virtualbox default
+docker-machine env default
+</pre></div>
+</div>
+<p>See <a class="reference external" href="https://stackoverflow.com/a/33596140/9940782">this link</a> for help on all machines or <a class="reference external" href="https://stackoverflow.com/a/49719638/9940782">this one</a>
+for MacOS.</p>
+<p>Then build the docker image:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker build -t ml_drought .
+</pre></div>
+</div>
+<p>Then, use it to run a container, mounting the data folder to the container:</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3><a href="index.html">ml_clim</a></h3>
+<p class="caption"><span class="caption-text">Getting started:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Developing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pipeline:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/install.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="develop.html" title="Developing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="A Machine Learning Pipeline for Climate Science"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Thomas Lees, Gabriel Tseng.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+    </div>
+  </body>
+</html>
