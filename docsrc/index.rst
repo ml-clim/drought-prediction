@@ -18,15 +18,17 @@ These tasks are split into the different classes defined in the `src` folder, an
 
 Some basic working knowledge of Python is required to use this pipeline, although it is not too onerous.
 
+Overview
+---------
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   data
    engineer
+   exporters
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`search`
+.. * :ref:`genindex`
+.. :ref:`modindex`
