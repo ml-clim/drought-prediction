@@ -1,5 +1,7 @@
+This repo was cloned from [`ml_drought`](https://github.com/esowc/ml_drought) on Feb 2 2020.
+
 <!-- ![](https://imgur.com/8qjbXcD) -->
-[![Build Status](https://travis-ci.com/esowc/ml_drought.svg?branch=master)](https://travis-ci.com/esowc/ml_drought)
+[![Build Status](https://travis-ci.com/gabrieltseng/drought_prediction.svg?branch=master)](https://travis-ci.com/gabrieltseng/drought_prediction)
 
 <!-- OVERVIEW -->
 
@@ -11,7 +13,7 @@ The pipeline carries out a number of tasks to create a unified-data format for t
 
 These tasks are split into the different classes defined in the `src` folder and explained further below:
 
-<img src="https://github.com/esowc/ml_drought/blob/master/img/pipeline_overview.png" width="600"  style="margin:auto; width:70%; padding:10px;">
+<img src="https://github.com/gabrieltseng/drought_prediction/blob/master/img/pipeline_overview.png" width="600"  style="margin:auto; width:70%; padding:10px;">
 
 NOTE: some basic working knowledge of Python is required to use this pipeline, although it is not too onerous
 

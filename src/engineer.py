@@ -1,4 +1,5 @@
 import numpy as np
+import calendar
 from collections import defaultdict
 from datetime import datetime, date
 from pathlib import Path
@@ -6,18 +7,20 @@ import pickle
 import xarray as xr
 import warnings
 
+from .utils import minus_months
+
 from typing import cast, DefaultDict, Dict, List, Optional, Union, Tuple
 
 
-class _EngineerBase:
-    name: str
+class Engineer:
+    name: str = "one_month_forecast"
 
     def __init__(
         self, data_folder: Path = Path("data"), process_static: bool = False
     ) -> None:
 
         self.data_folder = data_folder
-        self.process_static = process_static
+        self._process_static = process_static
 
         self.interim_folder = data_folder / "interim"
         assert (
@@ -32,7 +35,7 @@ class _EngineerBase:
         except AttributeError:
             print("Name not defined! No experiment folder set up")
 
-        if self.process_static:
+        if self._process_static:
             self.static_output_folder = data_folder / "features/static"
             if not self.static_output_folder.exists():
                 self.static_output_folder.mkdir(parents=True)
@@ -45,11 +48,11 @@ class _EngineerBase:
         expected_length: Optional[int] = 12,
     ) -> None:
 
-        self._process_dynamic(test_year, target_variable, pred_months, expected_length)
-        if self.process_static:
-            self._process_static()
+        self.process_dynamic(test_year, target_variable, pred_months, expected_length)
+        if self._process_static:
+            self.process_static()
 
-    def _process_static(self):
+    def process_static(self):
 
         # this function assumes the static data has only two dimensions,
         # lat and lon
@@ -84,7 +87,7 @@ class _EngineerBase:
         with savepath.open("wb") as f:
             pickle.dump(normalization_values, f)
 
-    def _process_dynamic(
+    def process_dynamic(
         self,
         test_year: Union[int, List[int]],
         target_variable: str = "VHI",
@@ -253,17 +256,6 @@ class _EngineerBase:
                         self._save(xy_test, year=year, month=month, dataset_type="test")
         return train_ds
 
-    def _stratify_xy(
-        self,
-        ds: xr.Dataset,
-        year: int,
-        target_variable: str,
-        target_month: int,
-        pred_months: int,
-        expected_length: Optional[int],
-    ) -> Tuple[Optional[Dict[str, xr.Dataset]], date]:
-        raise NotImplementedError
-
     @staticmethod
     def _get_datetime(time: np.datetime64) -> date:
         return datetime.strptime(time.astype(str)[:10], "%Y-%m-%d").date()
@@ -303,3 +295,67 @@ class _EngineerBase:
     ) -> Union[xr.Dataset, xr.DataArray]:
         nan_ds = xr.full_like(ds, fill_value)
         return nan_ds
+
+    @staticmethod
+    def _stratify_xy(
+        ds: xr.Dataset,
+        year: int,
+        target_variable: str,
+        target_month: int,
+        pred_months: int = 11,
+        expected_length: Optional[int] = 11,
+    ) -> Tuple[Optional[Dict[str, xr.Dataset]], date]:
+        """
+        Note: expected_length should be the same as pred_months when the timesteps
+        are monthly, but should be more if the timesteps are at shorter resolution
+        than monthly.
+        """
+
+        print(f"Generating data for year: {year}, target month: {target_month}")
+
+        max_date = date(year, target_month, calendar.monthrange(year, target_month)[-1])
+        mx_year, mx_month, max_train_date = minus_months(
+            year, target_month, diff_months=1
+        )
+        _, _, min_date = minus_months(mx_year, mx_month, diff_months=pred_months)
+
+        # `max_date` is the date to be predicted;
+        # `max_train_date` is one timestep before;
+        min_date_np = np.datetime64(str(min_date))
+        max_date_np = np.datetime64(str(max_date))
+        max_train_date_np = np.datetime64(str(max_train_date))
+
+        print(
+            f"Max date: {str(max_date)}, max input date: {str(max_train_date)}, "
+            f"min input date: {str(min_date)}"
+        )
+
+        # boolean array indexing the timestamps to filter `ds`
+        x = (ds.time.values > min_date_np) & (ds.time.values <= max_train_date_np)
+        y = (ds.time.values > max_train_date_np) & (ds.time.values <= max_date_np)
+
+        # only expect ONE y timestamp
+        if sum(y) != 1:
+            print(f"Wrong number of y values! Expected 1, got {sum(y)}; returning None")
+            return None, cast(date, max_train_date)
+
+        if expected_length is not None:
+            if sum(x) != expected_length:
+                print(f"Wrong number of x values! Got {sum(x)} Returning None")
+
+                return None, cast(date, max_train_date)
+
+        # filter the dataset
+        x_dataset = ds.isel(time=x)
+        y_dataset = ds.isel(time=y)[target_variable].to_dataset(name=target_variable)
+
+        if x_dataset.time.size != expected_length:
+            # catch the errors as we get closer to the MINIMUM year
+            warnings.warn(
+                "For the `nowcast` experiment we expect the\
+                number of timesteps to be: {pred_months}.\
+                Currently: {x_dataset.time.size}"
+            )
+            return None, cast(date, max_train_date)
+
+        return {"x": x_dataset, "y": y_dataset}, cast(date, max_train_date)

@@ -4,22 +4,88 @@ import numpy as np
 import xarray as xr
 import datetime as dt
 
-from src.engineer import _OneMonthForecastEngineer as OneMonthForecastEngineer
+from src.engineer import Engineer
 
-from ..utils import _make_dataset
-from .test_base import _setup
+from .utils import _make_dataset
 
 
-class TestOneMonthForecastEngineer:
+def _setup(data_path, add_times=True, static=False):
+    # setup
+    interim_folder = data_path / "interim"
+    interim_folder.mkdir()
+
+    if static:
+        interim_folder = interim_folder / "static"
+        interim_folder.mkdir()
+
+    expected_output, expected_vars = [], []
+    for var in ["a", "b"]:
+        (interim_folder / f"{var}_preprocessed").mkdir(exist_ok=True, parents=True)
+
+        # this file should be captured
+        data, _, _ = _make_dataset((10, 10), var, const=True, add_times=add_times)
+        filename = interim_folder / f"{var}_preprocessed/hello.nc"
+        data.to_netcdf(filename)
+
+        expected_output.append(filename)
+        expected_vars.append(var)
+
+        # this file should not
+        (interim_folder / f"{var}_preprocessed/boo").touch()
+
+    # none of this should be captured
+    (interim_folder / "woops").mkdir()
+    woops_data, _, _ = _make_dataset((10, 10), "oops")
+    woops_data.to_netcdf(interim_folder / "woops/hi.nc")
+
+    return expected_output, expected_vars
+
+
+class TestEngineer:
+    def test_get_preprocessed(self, tmp_path, monkeypatch):
+
+        expected_files, expected_vars = _setup(tmp_path)
+
+        def mock_init(self, data_folder):
+            self.name = "dummy"
+            self.interim_folder = data_folder / "interim"
+
+        monkeypatch.setattr(Engineer, "__init__", mock_init)
+
+        engineer = Engineer(tmp_path)
+        files = engineer._get_preprocessed_files(static=False)
+
+        assert set(expected_files) == set(files), f"Did not retrieve expected files!"
+
+    def test_join(self, tmp_path, monkeypatch):
+
+        expected_files, expected_vars = _setup(tmp_path)
+
+        def mock_init(self, data_folder):
+            self.name = "dummy"
+            self.interim_folder = data_folder / "interim"
+
+        monkeypatch.setattr(Engineer, "__init__", mock_init)
+
+        engineer = Engineer(tmp_path)
+        joined_ds = engineer._make_dataset(static=False)
+
+        dims = ["lon", "lat", "time"]
+        output_vars = [var for var in joined_ds.variables if var not in dims]
+
+        assert set(output_vars) == set(
+            expected_vars
+        ), f"Did not retrieve all the expected variables!"
+
     def test_init(self, tmp_path):
 
         with pytest.raises(AssertionError) as e:
-            OneMonthForecastEngineer(tmp_path)
+            Engineer(tmp_path)
             assert "does not exist. Has the preprocesser been run?" in str(e)
 
         (tmp_path / "interim").mkdir()
 
-        OneMonthForecastEngineer(tmp_path)
+        Engineer(tmp_path)
 
         assert (tmp_path / "features").exists(), "Features directory not made!"
         assert (
@@ -29,13 +95,13 @@ class TestOneMonthForecastEngineer:
 
     def test_static(self, tmp_path):
         _, expected_vars = _setup(tmp_path, add_times=False, static=True)
-        engineer = OneMonthForecastEngineer(tmp_path, process_static=True)
+        engineer = Engineer(tmp_path, process_static=True)
 
         assert (
             tmp_path / "features/static"
         ).exists(), "Static output folder does not exist!"
 
-        engineer._process_static()
+        engineer.process_static()
 
         output_file = tmp_path / "features/static/data.nc"
         assert output_file.exists(), "Static output folder does not exist!"
@@ -50,7 +116,7 @@ class TestOneMonthForecastEngineer:
 
         dataset, _, _ = _make_dataset(size=(2, 2))
 
-        engineer = OneMonthForecastEngineer(tmp_path)
+        engineer = Engineer(tmp_path)
         train = engineer._train_test_split(
             dataset,
             years=[2001],
@@ -69,7 +135,7 @@ class TestOneMonthForecastEngineer:
 
         pred_months = expected_length = 11
 
-        engineer = OneMonthForecastEngineer(tmp_path)
+        engineer = Engineer(tmp_path)
         engineer.engineer(
             test_year=2001,
             target_variable="a",
@@ -116,7 +182,7 @@ class TestOneMonthForecastEngineer:
 
     def test_stratify(self, tmp_path):
         _setup(tmp_path)
-        engineer = OneMonthForecastEngineer(tmp_path)
+        engineer = Engineer(tmp_path)
         ds_target, _, _ = _make_dataset(size=(20, 20))
         ds_predictor, _, _ = _make_dataset(size=(20, 20))
         ds_predictor = ds_predictor.rename({"VHI": "predictor"})

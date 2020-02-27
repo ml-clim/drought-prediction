@@ -4,7 +4,7 @@ from collections import namedtuple
 from .base import BasePreProcessor
 from .utils import SHPtoXarray
 
-from typing import Optional, Dict
+from typing import Optional
 
 gpd = None
 GeoDataFrame = None
@@ -193,58 +193,3 @@ class KenyaAdminPreprocessor(OCHAAdminBoundariesPreprocesser):
             reference_nc_filepath=reference_nc_filepath,
             var_name=admin_level.var_name,
         )
-
-
-class KenyaASALMask(KenyaAdminPreprocessor):
-
-    analysis = False
-
-    asal_districts = [
-        "TURKANA",
-        "MANDERA",
-        "SAMBURU",
-        "GARISSA",
-        "MARSABIT",
-        "WAJIR",
-        "TANA RIVER",
-        "WEST POKOT",
-        "ISIOLO",
-        "KITUI",
-        "MOYALE",
-    ]
-
-    @staticmethod
-    def val_to_key(ds: xr.Dataset) -> Dict[str, int]:
-
-        return dict(
-            zip(
-                [v.strip() for v in ds.attrs["values"].split(",")],
-                [int(k.strip()) for k in ds.attrs["keys"].split(",")],
-            )
-        )
-
-    def preprocess(
-        self, reference_nc_filepath: Path, selection: str = "level_2"
-    ) -> None:
-
-        assert selection == "level_2", f"Only level 2 supported, got {selection}"
-        district_boundaries = self.get_admin_level("level_2")
-
-        ds = self._preprocess_single(
-            shp_filepath=district_boundaries.shp_filepath,
-            lookup_colname=district_boundaries.lookup_colname,
-            reference_nc_filepath=reference_nc_filepath,
-            var_name=district_boundaries.var_name,
-            save=False,
-        )
-
-        assert isinstance(ds, xr.Dataset)
-
-        val2key = self.val_to_key(ds)
-        relevant_keys = [val2key.get(district) for district in self.asal_districts]
-
-        ds["mask"] = ~ds.district_l2.isin(relevant_keys)
-        # save
-        filename = "kenya_asal_mask.nc"
-        ds.to_netcdf(self.out_dir / filename)
-        print(f"** {(self.out_dir / filename).as_posix()} saved! **")
