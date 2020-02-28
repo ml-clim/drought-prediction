@@ -40,6 +40,7 @@
 <div class="genindex-jumpbox">
  <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -47,6 +48,7 @@
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  
 </div>
 <h2 id="B">B</h2>
@@ -75,6 +77,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dataloader.html#src.models.data.DataLoader">DataLoader (class in src.models.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -86,8 +96,12 @@
 </li>
       <li><a href="datasets.html#src.preprocess.era5.ERA5MonthlyMeanPreprocessor">ERA5MonthlyMeanPreprocessor (class in src.preprocess.era5)</a>
 </li>
+      <li><a href="models/models.html#src.models.base.ModelBase.evaluate">evaluate() (src.models.base.ModelBase method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#src.models.base.ModelBase.explain">explain() (src.models.base.ModelBase method)</a>
+</li>
       <li><a href="datasets.html#src.exporters.cds.ERA5Exporter.export">export() (src.exporters.cds.ERA5Exporter method)</a>
 
       <ul>
@@ -104,6 +118,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#src.models.base.ModelBase.get_dataloader">get_dataloader() (src.models.base.ModelBase method)</a>
+</li>
       <li><a href="datasets.html#src.exporters.gleam.GLEAMExporter.get_granularities">get_granularities() (src.exporters.gleam.GLEAMExporter method)</a>
 </li>
   </ul></td>
@@ -129,11 +145,17 @@
       <li><a href="preprocessor.html#src.preprocess.base.BasePreProcessor.merge_files">merge_files() (src.preprocess.base.BasePreProcessor method)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#src.models.base.ModelBase">ModelBase (class in src.models.base)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/persistence.html#src.models.parsimonious.Persistence">Persistence (class in src.models.parsimonious)</a>
+</li>
       <li><a href="datasets.html#src.preprocess.chirps.CHIRPSPreprocessor.preprocess">preprocess() (src.preprocess.chirps.CHIRPSPreprocessor method)</a>
 
       <ul>
@@ -169,6 +191,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/persistence.html#src.models.parsimonious.Persistence.train">train() (src.models.parsimonious.Persistence method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 
 
           </div>
@@ -186,12 +216,17 @@
 <li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataloader.html">Dataloader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models/persistence.html">Persistence</a></li>
 </ul>
 </li>
 </ul>

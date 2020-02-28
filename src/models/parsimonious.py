@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 
 from typing import Dict, Tuple
 
@@ -6,14 +7,22 @@ from .base import ModelBase
 
 
 class Persistence(ModelBase):
-    """A parsimonious persistence model.
+    r"""A parsimonious persistence model.
     This "model" predicts the previous time-value of data. For example, its prediction
     for VHI in March 2018 will be VHI for February 2018 (assuming monthly time-granularity).
+
+    :param data_folder: Location of the data folder. Default = ``pathlib.Path("data")``.
     """
 
     model_name = "previous_month"
 
+    def __init__(self, data_folder: Path = Path("data")) -> None:
+        super().__init__(data_folder=data_folder)
+
     def train(self) -> None:
+        r"""
+        This "model" does not need to be trained!
+        """
         pass
 
     def save_model(self) -> None:

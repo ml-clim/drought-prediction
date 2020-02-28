@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dataloader &#8212; ml_clim  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Models" href="models/models.html" />
+    <link rel="prev" title="Engineer" href="engineer.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models/models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="engineer.html" title="Engineer"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="dataloader">
+<h1>Dataloader<a class="headerlink" href="#dataloader" title="Permalink to this headline">¶</a></h1>
+<p>The dataloader class contains most of the experimental flexibility of the models. It reads
+in <code class="docutils literal notranslate"><span class="pre">NetCDF</span></code> files produced by the Engineer. It is very similar to a
+<a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">PyTorch DataLoader</a>.</p>
+<p>Most of the options in the dataloader are exposed in the models - they’re documented here so that
+it is explicit where the functionality lives.</p>
+<dl class="class">
+<dt id="src.models.data.DataLoader">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.data.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param">data_path: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">batch_file_size: int = 1</em>, <em class="sig-param">mode: str = 'train'</em>, <em class="sig-param">shuffle_data: bool = True</em>, <em class="sig-param">clear_nans: bool = True</em>, <em class="sig-param">normalize: bool = True</em>, <em class="sig-param">predict_delta: bool = False</em>, <em class="sig-param">experiment: str = 'one_month_forecast'</em>, <em class="sig-param">mask: Optional[List[bool]] = None</em>, <em class="sig-param">pred_months: Optional[List[int]] = None</em>, <em class="sig-param">to_tensor: bool = False</em>, <em class="sig-param">surrounding_pixels: Optional[int] = None</em>, <em class="sig-param">ignore_vars: Optional[List[str]] = None</em>, <em class="sig-param">monthly_aggs: bool = True</em>, <em class="sig-param">static: Optional[str] = 'features'</em>, <em class="sig-param">device: str = 'cpu'</em>, <em class="sig-param">spatial_mask: Optional[xarray.core.dataarray.DataArray] = None</em>, <em class="sig-param">normalize_y: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.data.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dataloader; lazily load the training and test data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_path</strong> – Location of the data folder. Default = <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code>.</p></li>
+<li><p><strong>batch_file_size</strong> – The number of files to load at a time. Default = <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>mode</strong> – One of <code class="docutils literal notranslate"><span class="pre">{&quot;test&quot;,</span> <span class="pre">&quot;train&quot;}</span></code>. Whether to load testing or training data.
+This also affects the way the data is returned; for train, it is a concatenated array,
+but for test it is a dict with dates so that the netcdf file can easily be reconstructed.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;train&quot;</span></code>.</p></li>
+<li><p><strong>shuffle_data</strong> – Whether or not to shuffle data. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>clear_nans</strong> – Whether to remove nan values from the data</p></li>
+<li><p><strong>experiment</strong> – The name of the experiment to run. Specifically, the name of the engineer
+used to generate the data. Default = <code class="docutils literal notranslate"><span class="pre">&quot;one_month_forecast&quot;</span></code>
+(train on only historical data and predict one month ahead)</p></li>
+<li><p><strong>normalize</strong> – Whether to normalize the data. This assumes a normalizing_dict.pkl
+was saved by the engineer. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>mask</strong> – If not None, this list will be used to mask the input files.
+Useful for creating a train and validation set. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>pred_months</strong> – The months the model should predict. If None, all months are predicted.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>to_tensor</strong> – Whether to turn the np.ndarrays into torch.Tensors. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>surrounding_pixels</strong> – How many surrounding pixels to add to the input data.
+e.g. if the input is 1, then in addition to the pixels on the prediction point,
+the neighbouring (spatial) pixels will be included too, up to a distance of one pixel away.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ignore_vars</strong> – A list of variables to ignore. If None, all variables in the data_path will
+be included. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>monthly_aggs</strong> – Whether to include the monthly aggregates (mean and std across all spatial values)
+for the input variables. These will be additional dimensions to the historical
+(and optionally current) arrays. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>static</strong> – Whether to include static data. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>predict_delta</strong> – Whether to predict the change in the target variable relative to the
+previous timestep instead of the raw target variable. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>normalize_y</strong> – Whether to normalize y. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3><a href="index.html">ml_clim</a></h3>
+<p class="caption"><span class="caption-text">Getting started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Developing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pipeline:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dataloader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Models</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dataloader.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models/models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="engineer.html" title="Engineer"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Thomas Lees, Gabriel Tseng.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+    </div>
+  </body>
+</html>

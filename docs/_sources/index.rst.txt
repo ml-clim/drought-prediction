@@ -37,8 +37,10 @@ For more information, see:
    data
    exporters
    preprocessor
-   engineer
    datasets
+   engineer
+   dataloader
+   models/models
 
 .. * :ref:`search`
 .. * :ref:`genindex`

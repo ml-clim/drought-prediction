@@ -13,32 +13,34 @@ from typing import cast, Any, Dict, List, Optional, Union, Tuple
 
 
 class ModelBase:
-    """Base for all machine learning models.
-    Attributes:
-    ----------
-    data: pathlib.Path = Path('data')
-        The location of the data folder.
-    batch_size: int 1
-        The number of files to load at once. These will be chunked and shuffled, so
-        a higher value will lead to better shuffling (but will require more memory)
-    pred_months: Optional[List[int]] = None
-        The months the model should predict. If None, all months are predicted
-    include_pred_month: bool = True
-        Whether to include the prediction month to the model's training data
-    surrounding_pixels: Optional[int] = None
-        How many surrounding pixels to add to the input data. e.g. if the input is 1, then in
-        addition to the pixels on the prediction point, the neighbouring (spatial) pixels will
-        be included too, up to a distance of one pixel away
-    ignore_vars: Optional[List[str]] = None
-        A list of variables to ignore. If None, all variables in the data_path will be included
-    include_latlons: bool = True
-        Whether to include prediction pixel latitudes and longitudes in the model's
-        training data
-    include_static: bool = True
-        Whether to include static data
-    predict_delta: bool = False
-        Whether to model the CHANGE in target variable rather than the
-        raw values
+    r"""Base for all machine learning models.
+
+    :param data: The location of the data folder. Default = ``pathlib.Path("data")``
+    :param batch_size: The number of files to load at once. These will be chunked and
+        shuffled, so a higher value will lead to better shuffling
+        (but will require more memory). Default = ``1``.
+    :param pred_months: The months the model should predict. If None, all months are predicted.
+        Default = ``None``.
+    :param include_pred_month: Whether to include the prediction month to the model's training data.
+        Default = ``True``.
+    :param include_latlons: Whether to include prediction pixel latitudes and longitudes in the model's
+        training data. Default = ``True``.
+    :param include_monthly_aggs: Whether to include monthly aggregations. Default = ``True``.
+    :param include_yearly_aggs: Whether to include yearly aggregations. Default = ``True``.
+    :param surrounding_pixels: How many surrounding pixels to add to the input data. e.g. if the input
+        is 1, then in addition to the pixels on the prediction point, the neighbouring (spatial) pixels will
+        be included too, up to a distance of one pixel away. Default = ``None``.
+    :param ignore_vars: A list of variables to ignore. If None, all variables in the data_path will be included.
+        Default = ``None``.
+    :param static: Whether to include static data. Default = ``True``.
+    :param predict_delta: Whether to model the change in target variable rather than the
+        raw values. Default = ``False``.
+    :param spatial_mask: If an ``xr.DataArray` is passed, it will be used to mask the training / test data.
+        Default = ``None``.
+    :param include_pred_y: Whether to include the y value from one year ago, the same month. This is useful if
+        you are predicting a seasonal value. Default = ``False``.
+    :param normalize_y: Whether to normalize the y value being predicted. Default = ``False``. The predictions
+        saved in ``evaluate`` will be denormalized.
     """
 
     model_name: str  # to be added by the model classes
@@ -58,7 +60,7 @@ class ModelBase:
         static: Optional[str] = "embedding",
         predict_delta: bool = False,
         spatial_mask: Union[xr.DataArray, Path] = None,
-        include_prev_y: bool = True,
+        include_prev_y: bool = False,
         normalize_y: bool = False,
     ) -> None:
 
@@ -137,18 +139,10 @@ class ModelBase:
         raise NotImplementedError
 
     def explain(self, x: Any) -> np.ndarray:
-        """
-        Explain the predictions of the trained model on the input data x
+        r"""Explain the predictions of the trained model on the input data x
 
-        Arguments
-        ----------
-        x: Any
-            An input array / tensor
-
-        Returns
-        ----------
-        explanations: np.ndarray
-            A shap value for each of the input values. The sum of the shap
+        :param x: Any input array / tensor
+        :returns: A shap value for each of the input values. The sum of the shap
             values is equal to the prediction of the model for x
         """
         raise NotImplementedError
@@ -168,17 +162,12 @@ class ModelBase:
         return y
 
     def evaluate(self, save_results: bool = True, save_preds: bool = False) -> None:
-        """
-        Evaluate the trained model on the TEST data
+        r"""Evaluate the trained model on the test data
 
-        Arguments
-        ----------
-        save_results: bool = True
-            Whether to save the results of the evaluation. If true, they are
-            saved in self.model_dir / results.json
-        save_preds: bool = False
-            Whether to save the model predictions. If true, they are saved in
-            self.model_dir / {year}_{month}.nc
+        :param save_results: Whether to save the results of the evaluation. If true, they are
+            saved in ``self.model_dir / results.json``. Default = ``True``.
+        :param save_preds: Whether to save the model predictions. If true, they are saved in
+            ``self.model_dir / {year}_{month}.nc``. Default = ``False``.
         """
         test_arrays_dict, preds_dict = self.predict()
 
@@ -313,7 +302,7 @@ class ModelBase:
         self, mode: str, to_tensor: bool = False, shuffle_data: bool = False, **kwargs
     ) -> DataLoader:
         """
-        Return the correct dataloader for this model
+        :return: The correct dataloader for this model
         """
 
         default_args: Dict[str, Any] = {

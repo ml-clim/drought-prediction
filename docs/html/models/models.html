@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Models &#8212; ml_clim  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Persistence" href="persistence.html" />
+    <link rel="prev" title="Dataloader" href="../dataloader.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="persistence.html" title="Persistence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../dataloader.html" title="Dataloader"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<p>The following models have been implemented</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Models:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="persistence.html">Persistence</a></li>
+</ul>
+</div>
+<p>All models extend the following base model:</p>
+<dl class="class">
+<dt id="src.models.base.ModelBase">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.base.</code><code class="sig-name descname">ModelBase</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">experiment: str = 'one_month_forecast'</em>, <em class="sig-param">pred_months: Optional[List[int]] = None</em>, <em class="sig-param">include_pred_month: bool = True</em>, <em class="sig-param">include_latlons: bool = False</em>, <em class="sig-param">include_monthly_aggs: bool = True</em>, <em class="sig-param">include_yearly_aggs: bool = True</em>, <em class="sig-param">surrounding_pixels: Optional[int] = None</em>, <em class="sig-param">ignore_vars: Optional[List[str]] = None</em>, <em class="sig-param">static: Optional[str] = 'embedding'</em>, <em class="sig-param">predict_delta: bool = False</em>, <em class="sig-param">spatial_mask: Union[xarray.core.dataarray.DataArray</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">include_prev_y: bool = False</em>, <em class="sig-param">normalize_y: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.base.ModelBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base for all machine learning models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The location of the data folder. Default = <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p></li>
+<li><p><strong>batch_size</strong> – The number of files to load at once. These will be chunked and
+shuffled, so a higher value will lead to better shuffling
+(but will require more memory). Default = <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>pred_months</strong> – The months the model should predict. If None, all months are predicted.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>include_pred_month</strong> – Whether to include the prediction month to the model’s training data.
+Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>include_latlons</strong> – Whether to include prediction pixel latitudes and longitudes in the model’s
+training data. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>include_monthly_aggs</strong> – Whether to include monthly aggregations. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>include_yearly_aggs</strong> – Whether to include yearly aggregations. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>surrounding_pixels</strong> – How many surrounding pixels to add to the input data. e.g. if the input
+is 1, then in addition to the pixels on the prediction point, the neighbouring (spatial) pixels will
+be included too, up to a distance of one pixel away. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ignore_vars</strong> – A list of variables to ignore. If None, all variables in the data_path will be included.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>static</strong> – Whether to include static data. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>predict_delta</strong> – Whether to model the change in target variable rather than the
+raw values. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>spatial_mask</strong> – If an <code class="docutils literal notranslate"><span class="pre">xr.DataArray`</span> <span class="pre">is</span> <span class="pre">passed,</span> <span class="pre">it</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">mask</span> <span class="pre">the</span> <span class="pre">training</span> <span class="pre">/</span> <span class="pre">test</span> <span class="pre">data.</span>
+<span class="pre">Default</span> <span class="pre">=</span> <span class="pre">``None</span></code>.</p></li>
+<li><p><strong>include_pred_y</strong> – Whether to include the y value from one year ago, the same month. This is useful if
+you are predicting a seasonal value. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>normalize_y</strong> – Whether to normalize the y value being predicted. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>. The predictions
+saved in <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> will be denormalized.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.models.base.ModelBase.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">save_results: bool = True</em>, <em class="sig-param">save_preds: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.models.base.ModelBase.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the trained model on the test data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_results</strong> – Whether to save the results of the evaluation. If true, they are
+saved in <code class="docutils literal notranslate"><span class="pre">self.model_dir</span> <span class="pre">/</span> <span class="pre">results.json</span></code>. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>save_preds</strong> – Whether to save the model predictions. If true, they are saved in
+<code class="docutils literal notranslate"><span class="pre">self.model_dir</span> <span class="pre">/</span> <span class="pre">{year}_{month}.nc</span></code>. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.models.base.ModelBase.explain">
+<code class="sig-name descname">explain</code><span class="sig-paren">(</span><em class="sig-param">x: Any</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="headerlink" href="#src.models.base.ModelBase.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explain the predictions of the trained model on the input data x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – Any input array / tensor</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A shap value for each of the input values. The sum of the shap
+values is equal to the prediction of the model for x</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.models.base.ModelBase.get_dataloader">
+<code class="sig-name descname">get_dataloader</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em>, <em class="sig-param">to_tensor: bool = False</em>, <em class="sig-param">shuffle_data: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; src.models.data.DataLoader<a class="headerlink" href="#src.models.base.ModelBase.get_dataloader" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The correct dataloader for this model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3><a href="../index.html">ml_clim</a></h3>
+<p class="caption"><span class="caption-text">Getting started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop.html">Developing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pipeline:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../data.html">The data directory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exporters.html">Exporters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../engineer.html">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataloader.html">Dataloader</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="persistence.html">Persistence</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/models/models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="persistence.html" title="Persistence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../dataloader.html" title="Dataloader"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ml_clim  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Thomas Lees, Gabriel Tseng.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+    </div>
+  </body>
+</html>
