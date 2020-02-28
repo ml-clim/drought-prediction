@@ -83,6 +83,16 @@ We use [mypy](https://github.com/python/mypy) for type checking. This can be run
 
 We use [black](https://black.readthedocs.io/en/stable/) for code formatting.
 
+### Documentation
+
+To build documentation:
+
+```bash
+cd docsrc
+sphinx-build -b html . _build  # builds the html files
+make github  # copies the html files into /docs, where they can be turned into github pages
+```
+
 <!-- PROJECT TEAM MEMBERS -->
 
 __Team:__ [@tommylees112](https://github.com/tommylees112), [@gabrieltseng](https://github.com/gabrieltseng)

@@ -1,7 +1,7 @@
 Datasets
 ========
 
-The following datasets are supported (i.e. an exporter and preprocessor has been implented for it):
+The following datasets are supported (i.e. an exporter and preprocessor has been implented for them):
 
 Climate Data Store
 ~~~~~~~~~~~~~~~~~~
@@ -27,4 +27,19 @@ ERA5 replaces the ERA-Interim reanalysis.*
    :members:
 
 .. autoclass:: src.preprocess.era5.ERA5MonthlyMeanPreprocessor
+   :members:
+
+CHIRPS Rainfall Estimates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From the `CHIRPS website <https://www.chc.ucsb.edu/data/chirps>`_:
+
+*Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS) is a 35+ year quasi-global rainfall data set. Spanning 50°S-50°N (and all 
+longitudes) and ranging from 1981 to near-present, CHIRPS incorporates our in-house climatology, CHPclim, 0.05° resolution satellite imagery, 
+and in-situ station data to create gridded rainfall time series for trend analysis and seasonal drought monitoring.*
+
+.. autoclass:: src.exporters.chirps.CHIRPSExporter
+   :members:
+
+.. autoclass:: src.preprocess.chirps.CHIRPSPreprocessor
    :members:
