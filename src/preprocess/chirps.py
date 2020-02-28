@@ -13,8 +13,8 @@ from .base import BasePreProcessor
 
 
 class CHIRPSPreprocessor(BasePreProcessor):
-    r"""Preprocesses the CHIRPS data 
-    
+    r"""Preprocesses the CHIRPS data
+
     :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
     """
 
@@ -66,7 +66,9 @@ class CHIRPSPreprocessor(BasePreProcessor):
         print(f"** Done for CHIRPS {netcdf_filepath.name} **")
 
     @staticmethod
-    def _create_filename(netcdf_filepath: str, subset_name: Optional[str] = None) -> str:
+    def _create_filename(
+        netcdf_filepath: str, subset_name: Optional[str] = None
+    ) -> str:
         """
         chirps-v2.0.2009.pentads.nc
             =>

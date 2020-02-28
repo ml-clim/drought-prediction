@@ -10,9 +10,15 @@ gdal = None
 
 
 class SRTMExporter(BaseExporter):
-    """Export SRTM elevation data. This exporter leverages
+    r"""Export SRTM elevation data. This exporter leverages
     the elevation package, http://elevation.bopen.eu/en/stable/, to download
     SRTM topography data.
+    This exporter requires GDAL and the elevation package to work.
+
+    An additional quirk of this exporter is that the region is defined **here**, instead of
+    in the preprocessor.
+
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
     """
 
     dataset = "srtm"
@@ -50,20 +56,16 @@ class SRTMExporter(BaseExporter):
         product: str = "SRTM3",
         max_download_tiles: int = 15,
     ) -> None:
-        """
-        Export SRTm topography data
+        r"""Export SRTm topography data
 
-        Arguments
-        ----------
-        region_name: str = 'kenya'
-            The region to download. Must be one of the regions in the
-            region_lookup dictionary
-        product: {'SRTM1', 'SRTM3'} = 'SRTM3'
-            The product to download the data from
-        max_download_tiles: int = 15
-            By default, the elevation package doesn't allow more than 9
-            tiles to be downloaded. Kenya is 12 tiles - this increases the
-            limit to allow Kenya to be downloaded
+        :param region_name: Defines a geographical subset of the downloaded data to be used.
+            Should be one of the regions defined in src.utils.region_lookup.
+            Default = ``"kenya"``.
+        :param product: One of ``{"SRTM1", "SRTM3"}``, the product to download the data from.
+            Default = ``"SRTM3"``.
+        :param max_download_tiles: By default, the elevation package doesn't allow more than 9
+            tiles to be downloaded. Kenya is 12 tiles - this increases the limit to allow
+            Kenya to be downloaded. Default = ``15``.
         """
 
         region = region_lookup[region_name]

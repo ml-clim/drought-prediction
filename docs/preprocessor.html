@@ -112,7 +112,8 @@ since all the data is necessary to do that.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
 Only used to make a more descriptive filename.</p></li>
-<li><p><strong>resample_length</strong> – Defines the time length to which the data will be resampled.</p></li>
+<li><p><strong>resample_time</strong> – Defines the time length to which the data will be resampled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+no time-resampling happens. Default = <code class="docutils literal notranslate"><span class="pre">&quot;M&quot;</span></code> (monthly).</p></li>
 <li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
 nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>filename</strong> – Override the default created filename by passing a <code class="docutils literal notranslate"><span class="pre">string</span></code> filename here.</p></li>
@@ -166,6 +167,7 @@ May speed up the regridder. Default = <code class="docutils literal notranslate"
 <li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
 </ul>
 </li>
 </ul>

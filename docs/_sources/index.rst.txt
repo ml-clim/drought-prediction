@@ -18,6 +18,11 @@ These tasks are split into the different classes defined in the `src` folder, an
 
 Some basic working knowledge of Python is required to use this pipeline, although it is not too onerous.
 
+For more information, see:
+
+* `A blog post <https://gabrieltseng.github.io/2019/07/10/ML-Climate-Research.html>`_ describing the goals and design of the pipeline
+* `An initial presentation <https://www.youtube.com/watch?v=QVFiGERCiYs>`_ of the pipeline
+
 .. toctree::
    :maxdepth: 2
    :caption: Getting started:

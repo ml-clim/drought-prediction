@@ -9,10 +9,20 @@ from .base import BasePreProcessor
 
 
 class SRTMPreprocessor(BasePreProcessor):
+    r"""Preprocess SRTM data downloaded by the SRTMExporter. Note - the regridder
+    functionality requires `CDO <https://code.mpimet.mpg.de/projects/cdo/wiki/Tutorial>`_ to
+    be installed
+
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
+    """
+
     dataset = "srtm"
     static = True
 
-    def regrid(  # type: ignore
+    def __init__(self, data_folder: Path = Path("data")) -> None:
+        super().__init__(data_folder, None)
+
+    def _regrid(  # type: ignore
         self, ds: xr.Dataset, regrid: Path, method: str = "remapbil"
     ) -> xr.Dataset:
 
@@ -66,19 +76,14 @@ class SRTMPreprocessor(BasePreProcessor):
         regrid: Optional[Path] = None,
         cleanup: bool = True,
     ) -> None:
-        """Preprocess a downloaded topography .nc file to produce
+        r"""Preprocess a downloaded topography .nc file to produce
         one subset file with no timestep
 
-        Arguments:
-        ---------
-        subset_str: str = 'kenya'
-            Because the SRTM data can only be downloaded in tiles, the subsetting happens
-            during the export step. This tells the preprocessor which file to preprocess
-        regrid: Optional[Path] = None
-            If a Path is passed, the CHIRPS files will be regridded to have the same
-            grid as the dataset at that Path. If None, no regridding happens
-        cleanup: bool = True
-            If true, delete interim files created by the class
+        :param subset_str: Because the SRTM data can only be downloaded in tiles, the subsetting
+            happens during the export step. This tells the preprocessor which file to preprocess
+        :param regrid: If a Path is passed, the output files will be regridded to have the same
+            spatial grid as the dataset at that Path. If None, no regridding happens. Default = ``None``.
+        :param cleanup: If true, delete interim files created by the class. Default = ``True``.
         """
         print(f"Reading data from {self.raw_folder}. Writing to {self.interim}")
 
@@ -95,7 +100,7 @@ class SRTMPreprocessor(BasePreProcessor):
                 "See here for installation details: "
                 "https://code.mpimet.mpg.de/projects/cdo/wiki/Tutorial"
             )
-            ds = self.regrid(ds, regrid)
+            ds = self._regrid(ds, regrid)
 
         print(f"Saving to {self.out_dir}/{subset_str}.nc")
         ds.to_netcdf(str(self.out_dir / f"{subset_str}.nc"))

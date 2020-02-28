@@ -117,10 +117,10 @@ class CHIRPSExporter(BaseExporter):
 
         :param years: The years of data to download. If None, all data will be downloaded.
             Default = ``None``.
-        :param region: one of ``{"africa", "global"}``, The dataset region to download. 
+        :param region: one of ``{"africa", "global"}``, The dataset region to download.
             If global, a netcdf file is downloaded. If africa, a tif file is downloaded.
             Default = ``"africa"``.
-        :param period: One of ``{"monthly", "weekly", "pentad"...}``. 
+        :param period: One of ``{"monthly", "weekly", "pentad"...}``.
             The period of the data being downloaded. Default = ``"monthly"``.
         :param n_parallel_processes: The number of parallel processes to use when downloading
             the data. Default = ``1`` (none).

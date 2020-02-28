@@ -43,3 +43,18 @@ and in-situ station data to create gridded rainfall time series for trend analys
 
 .. autoclass:: src.preprocess.chirps.CHIRPSPreprocessor
    :members:
+
+SRTM Digital Elevation Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From the `SRTM website <http://srtm.csi.cgiar.org/>`_:
+
+*The SRTM digital elevation data, produced by NASA originally, is a major breakthrough in digital mapping of the world, 
+and provides a major advance in the accessibility of high quality elevation data for large portions of the tropics and 
+other areas of the developing world.*
+
+.. autoclass:: src.exporters.srtm.SRTMExporter
+   :members:
+
+.. autoclass:: src.preprocess.srtm.SRTMPreprocessor
+   :members:
