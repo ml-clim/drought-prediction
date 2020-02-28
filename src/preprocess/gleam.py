@@ -69,7 +69,9 @@ class GLEAMPreprocessor(BasePreProcessor):
         print(f"** Done for GLEAM {netcdf_filepath.name} **")
 
     @staticmethod
-    def _create_filename(netcdf_filename: str, subset_name: Optional[str] = None) -> str:
+    def _create_filename(
+        netcdf_filename: str, subset_name: Optional[str] = None
+    ) -> str:
         """
         monthly/E_1980_2018_GLEAM_v3.3a_MO.nc
             =>
