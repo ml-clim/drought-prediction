@@ -47,12 +47,13 @@
 provides easy access to a wide range of climate datasets via a searchable catalogue. An online toolbox is available
 that allows users to build workflows and applications suited to their needs.</em></p>
 <p>The climate data store consists of multiple datasets. The following are supported in this pipeline:</p>
-<div class="section" id="era5-monthly-averaged-data">
-<h3>ERA5 monthly averaged data<a class="headerlink" href="#era5-monthly-averaged-data" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="era5-era5-land-monthly-averaged-data">
+<h3>ERA5 / ERA5 Land monthly averaged data<a class="headerlink" href="#era5-era5-land-monthly-averaged-data" title="Permalink to this headline">¶</a></h3>
 <p>From the <a class="reference external" href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels-monthly-means?tab=overview">ERA5 documentation</a>:</p>
 <p><em>ERA5 is the fifth generation ECMWF reanalysis for the global climate and weather for the past 4 to 7 decades.
 Currently data is available from 1979. When complete, ERA5 will contain a detailed record from 1950 onwards.
 ERA5 replaces the ERA-Interim reanalysis.</em></p>
+<p>This exporter can export a number of other datasets, notably <a class="reference external" href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land-monthly-means?tab=overview">ERA5 Land</a>.</p>
 <dl class="class">
 <dt id="src.exporters.cds.ERA5Exporter">
 <em class="property">class </em><code class="sig-prename descclassname">src.exporters.cds.</code><code class="sig-name descname">ERA5Exporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.cds.ERA5Exporter" title="Permalink to this definition">¶</a></dt>
@@ -96,33 +97,17 @@ even when downloading 30 years of data. Default = <code class="docutils literal 
 
 <dl class="class">
 <dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor">
-<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.era5.</code><code class="sig-name descname">ERA5MonthlyMeanPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.era5.</code><code class="sig-name descname">ERA5MonthlyMeanPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">output_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>A processor for data downloaded by <cite>src.exporters.cds.ERA5Exporter</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
-</dd>
-</dl>
-<dl class="method">
-<dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor.merge_files">
-<code class="sig-name descname">merge_files</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">filename: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor.merge_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge multiple interim files into a single preprocessed file. The time resampling happens here,
-since all the data is necessary to do that.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
-Only used to make a more descriptive filename.</p></li>
-<li><p><strong>resample_time</strong> – Defines the time length to which the data will be resampled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-no time-resampling happens. Default = <code class="docutils literal notranslate"><span class="pre">&quot;M&quot;</span></code> (monthly).</p></li>
-<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
-nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>filename</strong> – Override the default created filename by passing a <code class="docutils literal notranslate"><span class="pre">string</span></code> filename here.</p></li>
+<li><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p></li>
+<li><p><strong>output_name</strong> – This processor can be used for multiple datasets. This allows the
+dataset to be selected.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="method">
 <dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor.preprocess">
 <code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">parallel: bool = False</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
@@ -298,6 +283,84 @@ spatial grid as the dataset at that Path. If None, no regridding happens. Defaul
 </dd></dl>
 
 </div>
+<div class="section" id="global-land-evaporation-amsterdam-model">
+<h2>Global Land Evaporation Amsterdam Model<a class="headerlink" href="#global-land-evaporation-amsterdam-model" title="Permalink to this headline">¶</a></h2>
+<p>From the <a class="reference external" href="https://www.gleam.eu/">GLEAM website</a>:</p>
+<p><em>GLEAM (Global Land Evaporation Amsterdam Model) is a set of algorithms that separately estimate the different components
+of land evaporation (or ‘evapotranspiration’): transpiration, bare-soil evaporation, interception loss, open-water
+evaporation and sublimation.</em></p>
+<dl class="class">
+<dt id="src.exporters.gleam.GLEAMExporter">
+<em class="property">class </em><code class="sig-prename descclassname">src.exporters.gleam.</code><code class="sig-name descname">GLEAMExporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.gleam.GLEAMExporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download data from the
+<a class="reference external" href="gleam.eu">Global Land Evaporation Amsterdam Model</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.exporters.gleam.GLEAMExporter.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">variables: Union[str, List[str]], granularity: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.exporters.gleam.GLEAMExporter.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the exporter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> – A variable or list of variables to download.</p></li>
+<li><p><strong>granularity</strong> – The granularity of data to be downloaded. Use <code class="docutils literal notranslate"><span class="pre">get_granularities</span></code> to
+get a list of acceptable granularities.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.exporters.gleam.GLEAMExporter.get_granularities">
+<code class="sig-name descname">get_granularities</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#src.exporters.gleam.GLEAMExporter.get_granularities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get acceptable data granularities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of granularities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.preprocess.gleam.GLEAMPreprocessor">
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.gleam.</code><code class="sig-name descname">GLEAMPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.gleam.GLEAMPreprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess the GLEAM data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.preprocess.gleam.GLEAMPreprocessor.preprocess">
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.gleam.GLEAMPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess all of the GLEAM .nc files to produce
+one subset file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
+Only used to make a more descriptive filename.</p></li>
+<li><p><strong>regrid</strong> – If a Path is passed, the output files will be regridded to have the same
+spatial grid as the dataset at that Path. If None, no regridding happens. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>resample_time</strong> – Defines the time length to which the data will be resampled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+no time-resampling happens. Default = <code class="docutils literal notranslate"><span class="pre">&quot;M&quot;</span></code> (monthly).</p></li>
+<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
+nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>cleanup</strong> – If true, delete interim files created by the class. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -321,6 +384,7 @@ spatial grid as the dataset at that Path. If None, no regridding happens. Defaul
 <li class="toctree-l2"><a class="reference internal" href="#climate-data-store">Climate Data Store</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
 </ul>
 </li>
 </ul>

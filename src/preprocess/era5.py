@@ -15,6 +15,8 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
     r"""A processor for data downloaded by `src.exporters.cds.ERA5Exporter`.
 
     :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
+    :param output_name: This processor can be used for multiple datasets. This allows the
+        dataset to be selected.
     """
 
     dataset = "reanalysis-era5-single-levels-monthly-means"
@@ -22,9 +24,6 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
     # some ERA5 variables need to be treated statically
     # they are recorded here
     static_vars = ["soil_type"]
-
-    def __init__(self, data_folder: Path = Path("data")) -> None:
-        super().__init__(data_folder=data_folder, output_name=None)
 
     @staticmethod
     def create_filename(
@@ -104,7 +103,7 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
         outfiles.sort()
         return outfiles
 
-    def merge_files(
+    def _merge_files(
         self,
         subset_str: Optional[str] = "kenya",
         resample_time: Optional[str] = "M",
@@ -198,7 +197,7 @@ class ERA5MonthlyMeanPreprocessor(BasePreProcessor):
                 self._preprocess_single(file, subset_str, regrid)
 
         # merge all of the timesteps
-        self.merge_files(subset_str, resample_time, upsampling)
+        self._merge_files(subset_str, resample_time, upsampling)
 
         if cleanup:
             rmtree(self.interim)
