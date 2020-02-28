@@ -14,7 +14,8 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Engineer" href="engineer.html" /> 
+    <link rel="next" title="Engineer" href="engineer.html" />
+    <link rel="prev" title="Preprocessor" href="preprocessor.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,6 +28,9 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="engineer.html" title="Engineer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="preprocessor.html" title="Preprocessor"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
       </ul>
@@ -39,7 +43,7 @@
             
   <div class="section" id="datasets">
 <h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h1>
-<p>The following datasets are supported (i.e. an exporter and preprocessor has been implented for it):</p>
+<p>The following datasets are supported (i.e. an exporter and preprocessor has been implented for them):</p>
 <div class="section" id="climate-data-store">
 <h2>Climate Data Store<a class="headerlink" href="#climate-data-store" title="Permalink to this headline">¶</a></h2>
 <p>From the <a class="reference external" href="https://climate.copernicus.eu/climate-data-store">Climate Data Store</a> website:</p>
@@ -47,12 +51,13 @@
 provides easy access to a wide range of climate datasets via a searchable catalogue. An online toolbox is available
 that allows users to build workflows and applications suited to their needs.</em></p>
 <p>The climate data store consists of multiple datasets. The following are supported in this pipeline:</p>
-<div class="section" id="era5-monthly-averaged-data">
-<h3>ERA5 monthly averaged data<a class="headerlink" href="#era5-monthly-averaged-data" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="era5-era5-land-monthly-averaged-data">
+<h3>ERA5 / ERA5 Land monthly averaged data<a class="headerlink" href="#era5-era5-land-monthly-averaged-data" title="Permalink to this headline">¶</a></h3>
 <p>From the <a class="reference external" href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels-monthly-means?tab=overview">ERA5 documentation</a>:</p>
 <p><em>ERA5 is the fifth generation ECMWF reanalysis for the global climate and weather for the past 4 to 7 decades.
 Currently data is available from 1979. When complete, ERA5 will contain a detailed record from 1950 onwards.
 ERA5 replaces the ERA-Interim reanalysis.</em></p>
+<p>This exporter can export a number of other datasets, notably <a class="reference external" href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land-monthly-means?tab=overview">ERA5 Land</a>.</p>
 <dl class="class">
 <dt id="src.exporters.cds.ERA5Exporter">
 <em class="property">class </em><code class="sig-prename descclassname">src.exporters.cds.</code><code class="sig-name descname">ERA5Exporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.cds.ERA5Exporter" title="Permalink to this definition">¶</a></dt>
@@ -96,32 +101,17 @@ even when downloading 30 years of data. Default = <code class="docutils literal 
 
 <dl class="class">
 <dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor">
-<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.era5.</code><code class="sig-name descname">ERA5MonthlyMeanPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.era5.</code><code class="sig-name descname">ERA5MonthlyMeanPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">output_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>A processor for data downloaded by <cite>src.exporters.cds.ERA5Exporter</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
-</dd>
-</dl>
-<dl class="method">
-<dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor.merge_files">
-<code class="sig-name descname">merge_files</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">filename: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor.merge_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge multiple interim files into a single preprocessed file. The time resampling happens here,
-since all the data is necessary to do that.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
-Only used to make a more descriptive filename.</p></li>
-<li><p><strong>resample_length</strong> – Defines the time length to which the data will be resampled.</p></li>
-<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
-nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>filename</strong> – Override the default created filename by passing a <code class="docutils literal notranslate"><span class="pre">string</span></code> filename here.</p></li>
+<li><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p></li>
+<li><p><strong>output_name</strong> – This processor can be used for multiple datasets. This allows the
+dataset to be selected.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="method">
 <dt id="src.preprocess.era5.ERA5MonthlyMeanPreprocessor.preprocess">
 <code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">parallel: bool = False</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.era5.ERA5MonthlyMeanPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
@@ -149,6 +139,232 @@ nearest instead of mean is used for the resampling. Default = <code class="docut
 
 </div>
 </div>
+<div class="section" id="chirps-rainfall-estimates">
+<h2>CHIRPS Rainfall Estimates<a class="headerlink" href="#chirps-rainfall-estimates" title="Permalink to this headline">¶</a></h2>
+<p>From the <a class="reference external" href="https://www.chc.ucsb.edu/data/chirps">CHIRPS website</a>:</p>
+<p><em>Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS) is a 35+ year quasi-global rainfall data set. Spanning 50°S-50°N (and all
+longitudes) and ranging from 1981 to near-present, CHIRPS incorporates our in-house climatology, CHPclim, 0.05° resolution satellite imagery,
+and in-situ station data to create gridded rainfall time series for trend analysis and seasonal drought monitoring.</em></p>
+<dl class="class">
+<dt id="src.exporters.chirps.CHIRPSExporter">
+<em class="property">class </em><code class="sig-prename descclassname">src.exporters.chirps.</code><code class="sig-name descname">CHIRPSExporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.chirps.CHIRPSExporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports precip from the Climate Hazards group site.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.exporters.chirps.CHIRPSExporter.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">years: Optional[List[int]] = None</em>, <em class="sig-param">region: str = 'global'</em>, <em class="sig-param">period: str = 'monthly'</em>, <em class="sig-param">n_parallel_processes: int = 1</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.exporters.chirps.CHIRPSExporter.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export functionality for the CHIRPS precipitation product</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>years</strong> – The years of data to download. If None, all data will be downloaded.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>region</strong> – one of <code class="docutils literal notranslate"><span class="pre">{&quot;africa&quot;,</span> <span class="pre">&quot;global&quot;}</span></code>, The dataset region to download.
+If global, a netcdf file is downloaded. If africa, a tif file is downloaded.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;africa&quot;</span></code>.</p></li>
+<li><p><strong>period</strong> – One of <code class="docutils literal notranslate"><span class="pre">{&quot;monthly&quot;,</span> <span class="pre">&quot;weekly&quot;,</span> <span class="pre">&quot;pentad&quot;...}</span></code>.
+The period of the data being downloaded. Default = <code class="docutils literal notranslate"><span class="pre">&quot;monthly&quot;</span></code>.</p></li>
+<li><p><strong>n_parallel_processes</strong> – The number of parallel processes to use when downloading
+the data. Default = <code class="docutils literal notranslate"><span class="pre">1</span></code> (none).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.preprocess.chirps.CHIRPSPreprocessor">
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.chirps.</code><code class="sig-name descname">CHIRPSPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.chirps.CHIRPSPreprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocesses the CHIRPS data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.preprocess.chirps.CHIRPSPreprocessor.preprocess">
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">parallel: bool = False</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.chirps.CHIRPSPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess all of the CHIRPS .nc files to produce
+one subset file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_str</strong> – Defines a geographical subset of the downloaded data to be used.
+Should be one of the regions defined in <code class="docutils literal notranslate"><span class="pre">src.utils.region_lookup</span></code>.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;kenya&quot;</span></code>.</p></li>
+<li><p><strong>regrid</strong> – A path to the reference dataset, onto which the CHIRPS data will be regridded.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no regridding happens. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>resample_time</strong> – Defines the time length to which the data will be resampled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+no time-resampling happens. Default = <code class="docutils literal notranslate"><span class="pre">&quot;M&quot;</span></code> (monthly).</p></li>
+<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
+nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>parallel</strong> – Whether to run the preprocessing in parallel. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>cleanup</strong> – Whether to delete interim files created during preprocessing. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="srtm-digital-elevation-data">
+<h2>SRTM Digital Elevation Data<a class="headerlink" href="#srtm-digital-elevation-data" title="Permalink to this headline">¶</a></h2>
+<p>From the <a class="reference external" href="http://srtm.csi.cgiar.org/">SRTM website</a>:</p>
+<p><em>The SRTM digital elevation data, produced by NASA originally, is a major breakthrough in digital mapping of the world,
+and provides a major advance in the accessibility of high quality elevation data for large portions of the tropics and
+other areas of the developing world.</em></p>
+<dl class="class">
+<dt id="src.exporters.srtm.SRTMExporter">
+<em class="property">class </em><code class="sig-prename descclassname">src.exporters.srtm.</code><code class="sig-name descname">SRTMExporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.srtm.SRTMExporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export SRTM elevation data. This exporter leverages
+the elevation package, <a class="reference external" href="http://elevation.bopen.eu/en/stable/">http://elevation.bopen.eu/en/stable/</a>, to download
+SRTM topography data.
+This exporter requires GDAL and the elevation package to work.</p>
+<p>An additional quirk of this exporter is that the region is defined <strong>here</strong>, instead of
+in the preprocessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.exporters.srtm.SRTMExporter.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">region_name: str = 'kenya'</em>, <em class="sig-param">product: str = 'SRTM3'</em>, <em class="sig-param">max_download_tiles: int = 15</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.exporters.srtm.SRTMExporter.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export SRTm topography data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region_name</strong> – Defines a geographical subset of the downloaded data to be used.
+Should be one of the regions defined in src.utils.region_lookup.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;kenya&quot;</span></code>.</p></li>
+<li><p><strong>product</strong> – One of <code class="docutils literal notranslate"><span class="pre">{&quot;SRTM1&quot;,</span> <span class="pre">&quot;SRTM3&quot;}</span></code>, the product to download the data from.
+Default = <code class="docutils literal notranslate"><span class="pre">&quot;SRTM3&quot;</span></code>.</p></li>
+<li><p><strong>max_download_tiles</strong> – By default, the elevation package doesn’t allow more than 9
+tiles to be downloaded. Kenya is 12 tiles - this increases the limit to allow
+Kenya to be downloaded. Default = <code class="docutils literal notranslate"><span class="pre">15</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.preprocess.srtm.SRTMPreprocessor">
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.srtm.</code><code class="sig-name descname">SRTMPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.srtm.SRTMPreprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess SRTM data downloaded by the SRTMExporter. Note - the regridder
+functionality requires <a class="reference external" href="https://code.mpimet.mpg.de/projects/cdo/wiki/Tutorial">CDO</a> to
+be installed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.preprocess.srtm.SRTMPreprocessor.preprocess">
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: str = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.srtm.SRTMPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a downloaded topography .nc file to produce
+one subset file with no timestep</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_str</strong> – Because the SRTM data can only be downloaded in tiles, the subsetting
+happens during the export step. This tells the preprocessor which file to preprocess</p></li>
+<li><p><strong>regrid</strong> – If a Path is passed, the output files will be regridded to have the same
+spatial grid as the dataset at that Path. If None, no regridding happens. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>cleanup</strong> – If true, delete interim files created by the class. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="global-land-evaporation-amsterdam-model">
+<h2>Global Land Evaporation Amsterdam Model<a class="headerlink" href="#global-land-evaporation-amsterdam-model" title="Permalink to this headline">¶</a></h2>
+<p>From the <a class="reference external" href="https://www.gleam.eu/">GLEAM website</a>:</p>
+<p><em>GLEAM (Global Land Evaporation Amsterdam Model) is a set of algorithms that separately estimate the different components
+of land evaporation (or ‘evapotranspiration’): transpiration, bare-soil evaporation, interception loss, open-water
+evaporation and sublimation.</em></p>
+<dl class="class">
+<dt id="src.exporters.gleam.GLEAMExporter">
+<em class="property">class </em><code class="sig-prename descclassname">src.exporters.gleam.</code><code class="sig-name descname">GLEAMExporter</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.exporters.gleam.GLEAMExporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download data from the
+<a class="reference external" href="gleam.eu">Global Land Evaporation Amsterdam Model</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.exporters.gleam.GLEAMExporter.export">
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param">variables: Union[str, List[str]], granularity: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.exporters.gleam.GLEAMExporter.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the exporter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> – A variable or list of variables to download.</p></li>
+<li><p><strong>granularity</strong> – The granularity of data to be downloaded. Use <code class="docutils literal notranslate"><span class="pre">get_granularities</span></code> to
+get a list of acceptable granularities.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.exporters.gleam.GLEAMExporter.get_granularities">
+<code class="sig-name descname">get_granularities</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#src.exporters.gleam.GLEAMExporter.get_granularities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get acceptable data granularities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of granularities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.preprocess.gleam.GLEAMPreprocessor">
+<em class="property">class </em><code class="sig-prename descclassname">src.preprocess.gleam.</code><code class="sig-name descname">GLEAMPreprocessor</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em><span class="sig-paren">)</span><a class="headerlink" href="#src.preprocess.gleam.GLEAMPreprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess the GLEAM data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> – The location of the data folder. Default: <code class="docutils literal notranslate"><span class="pre">pathlib.Path(&quot;data&quot;)</span></code></p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="src.preprocess.gleam.GLEAMPreprocessor.preprocess">
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param">subset_str: Optional[str] = 'kenya'</em>, <em class="sig-param">regrid: Optional[pathlib.Path] = None</em>, <em class="sig-param">resample_time: Optional[str] = 'M'</em>, <em class="sig-param">upsampling: bool = False</em>, <em class="sig-param">cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.preprocess.gleam.GLEAMPreprocessor.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess all of the GLEAM .nc files to produce
+one subset file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_str</strong> – The optional subset string used to get a geographical subset of the data.
+Only used to make a more descriptive filename.</p></li>
+<li><p><strong>regrid</strong> – If a Path is passed, the output files will be regridded to have the same
+spatial grid as the dataset at that Path. If None, no regridding happens. Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>resample_time</strong> – Defines the time length to which the data will be resampled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+no time-resampling happens. Default = <code class="docutils literal notranslate"><span class="pre">&quot;M&quot;</span></code> (monthly).</p></li>
+<li><p><strong>upsampling</strong> – If true, tells the class the time-sampling will be upsampling. In this case,
+nearest instead of mean is used for the resampling. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>cleanup</strong> – If true, delete interim files created by the class. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -167,11 +383,15 @@ nearest instead of mean is used for the resampling. Default = <code class="docut
 <li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="engineer.html">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataloader.html">Dataloader</a></li>
 </ul>
 
   <div role="note" aria-label="source link">
@@ -206,6 +426,9 @@ nearest instead of mean is used for the resampling. Default = <code class="docut
              >modules</a> |</li>
         <li class="right" >
           <a href="engineer.html" title="Engineer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="preprocessor.html" title="Preprocessor"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
       </ul>

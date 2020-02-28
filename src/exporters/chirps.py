@@ -11,11 +11,9 @@ BeautifulSoup = None
 
 
 class CHIRPSExporter(BaseExporter):
-    """Exports precip from the Climate Hazards group site
-    # 0.5degree
-    ftp://ftp.chg.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_pentad/netcdf/
-    # 0.25degree
-    ftp://ftp.chg.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_pentad/tifs/
+    r"""Exports precip from the Climate Hazards group site.
+
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
     """
 
     dataset = "chirps"
@@ -37,7 +35,7 @@ class CHIRPSExporter(BaseExporter):
 
         return self.base_url + url
 
-    def get_chirps_filenames(
+    def _get_chirps_filenames(
         self,
         years: Optional[List[int]] = None,
         region: str = "africa",
@@ -71,7 +69,7 @@ class CHIRPSExporter(BaseExporter):
             ]
         return chirpsfiles
 
-    def wget_file(self, filepath: str) -> None:
+    def _wget_file(self, filepath: str) -> None:
         """
         https://explainshell.com/explain?cmd=wget+-np+-nH+--cut
         -dirs+7+www.google.come+-P+folder
@@ -94,7 +92,6 @@ class CHIRPSExporter(BaseExporter):
         period: str = "monthly",
         n_parallel_processes: int = 1,
     ) -> None:
-        """ download the chirps files using wget """
         n_parallel_processes = min(1, n_parallel_processes)
 
         # build the base url
@@ -104,10 +101,10 @@ class CHIRPSExporter(BaseExporter):
 
         if n_parallel_processes > 1:
             pool = multiprocessing.Pool(processes=n_parallel_processes)
-            pool.map(self.wget_file, filepaths)
+            pool.map(self._wget_file, filepaths)
         else:
             for file in filepaths:
-                self.wget_file(file)
+                self._wget_file(file)
 
     def export(
         self,
@@ -117,17 +114,16 @@ class CHIRPSExporter(BaseExporter):
         n_parallel_processes: int = 1,
     ) -> None:
         """Export functionality for the CHIRPS precipitation product
-        Arguments
-        ----------
-        years: Optional list of ints, default = None
-            The years of data to download. If None, all data will be downloaded
-        region: str {'africa', 'global'}, default = 'global'
-            The dataset region to download. If global, a netcdf file is downloaded.
-            If africa, a tif file is downloaded
-        period: str {'monthly', 'weekly', 'pentad'...}
-            The period of the data being downloaded
-        n_parallel_processes: int, default = 1
-            Whether to n_parallel_processesize the downloading of data
+
+        :param years: The years of data to download. If None, all data will be downloaded.
+            Default = ``None``.
+        :param region: one of ``{"africa", "global"}``, The dataset region to download.
+            If global, a netcdf file is downloaded. If africa, a tif file is downloaded.
+            Default = ``"africa"``.
+        :param period: One of ``{"monthly", "weekly", "pentad"...}``.
+            The period of the data being downloaded. Default = ``"monthly"``.
+        :param n_parallel_processes: The number of parallel processes to use when downloading
+            the data. Default = ``1`` (none).
         """
 
         if years is not None:
@@ -146,7 +142,7 @@ class CHIRPSExporter(BaseExporter):
             self.region_folder.mkdir()
 
         # get the filenames to be downloaded
-        chirps_files = self.get_chirps_filenames(years, region, period)
+        chirps_files = self._get_chirps_filenames(years, region, period)
 
         # check if they already exist
         existing_files = [

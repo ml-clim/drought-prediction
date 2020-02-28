@@ -2,7 +2,6 @@ from .cds import ERA5Exporter
 from .vhi import VHIExporter
 from .chirps import CHIRPSExporter
 from .gleam import GLEAMExporter
-from .era5_land import ERA5LandExporter
 from .srtm import SRTMExporter
 from .admin_boundaries import KenyaAdminExporter
 
@@ -12,6 +11,5 @@ __all__ = [
     "CHIRPSExporter",
     "GLEAMExporter",
     "SRTMExporter",
-    "ERA5LandExporter",
     "KenyaAdminExporter",
 ]

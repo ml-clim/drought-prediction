@@ -209,7 +209,7 @@ class BasePreProcessor:
     def chop_roi(
         ds: xr.Dataset, subset_str: Optional[str] = "kenya", inverse_lat: bool = False
     ) -> xr.Dataset:
-        """Select a geographical subset of the data, based on a subset string.
+        r"""Select a geographical subset of the data, based on a subset string.
 
         :param ds: The dataset to be subsetted.
         :param subset_str: Defines a geographical subset of the downloaded data to be used.
@@ -235,7 +235,8 @@ class BasePreProcessor:
 
         :param subset_str: The optional subset string used to get a geographical subset of the data.
             Only used to make a more descriptive filename.
-        :param resample_length: Defines the time length to which the data will be resampled.
+        :param resample_time: Defines the time length to which the data will be resampled. If ``None``,
+            no time-resampling happens. Default = ``"M"`` (monthly).
         :param upsampling: If true, tells the class the time-sampling will be upsampling. In this case,
             nearest instead of mean is used for the resampling. Default = ``False``.
         :param filename: Override the default created filename by passing a ``string`` filename here.

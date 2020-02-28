@@ -213,50 +213,38 @@ def train_val_mask(
 
 class DataLoader:
     """Dataloader; lazily load the training and test data
-    Attributes:
-    ----------
-    data_path: Path = Path('data')
-        Location of the data folder
-    batch_file_size: int = 1
-        The number of files to load at a time
-    mode: str {'test', 'train'} = 'train'
-        Whether to load testing or training data. This also affects the way the data is
-        returned; for train, it is a concatenated array, but for test it is a dict with dates
-        so that the netcdf file can easily be reconstructed
-    shuffle_data: bool = True
-        Whether or not to shuffle data
-    clear_nans: bool = True
-        Whether to remove nan values
-    experiment: str = 'one_month_forecast'
-        the name of the experiment to run. Defaults to one_month_forecast
+
+    :param data_path: Location of the data folder. Default = ``pathlib.Path("data")``.
+    :param batch_file_size: The number of files to load at a time. Default = ``1``.
+    :param mode: One of ``{"test", "train"}``. Whether to load testing or training data.
+        This also affects the way the data is returned; for train, it is a concatenated array,
+        but for test it is a dict with dates so that the netcdf file can easily be reconstructed.
+        Default = ``"train"``.
+    :param shuffle_data: Whether or not to shuffle data. Default = ``True``.
+    :param clear_nans: Whether to remove nan values from the data
+    :param experiment: The name of the experiment to run. Specifically, the name of the engineer
+        used to generate the data. Default = ``"one_month_forecast"``
         (train on only historical data and predict one month ahead)
-    normalize: bool = True
-        Whether to normalize the data. This assumes a normalizing_dict.pkl was saved by the
-        engineer
-    mask: Optional[List[bool]] = None
-        If not None, this list will be used to mask the input files. Useful for creating a train
-        and validation set
-    pred_months: Optional[List[int]] = None
-        The months the model should predict. If None, all months are predicted
-    to_tensor: bool = False
-        Whether to turn the np.ndarrays into torch.Tensors
-    surrounding_pixels: Optional[int] = None
-        How many surrounding pixels to add to the input data. e.g. if the input is 1, then in
-        addition to the pixels on the prediction point, the neighbouring (spatial) pixels will
-        be included too, up to a distance of one pixel away
-    ignore_vars: Optional[List[str]] = None
-        A list of variables to ignore. If None, all variables in the data_path will be included
-    monthly_aggs: bool = True
-        Whether to include the monthly aggregates (mean and std across all spatial values) for
-        the input variables. These will be additional dimensions to the historical
-        (and optionally current) arrays
-    static: bool = True
-        Whether to include static data
-    predict_delta: bool = False
-        Whether to predict the CHANGE in the target variable relative to the previous timestep
-        instead of the raw target variable.
-    normalize_y: bool = True
-        Whether to normalize y
+    :param normalize: Whether to normalize the data. This assumes a normalizing_dict.pkl
+        was saved by the engineer. Default = ``True``.
+    :param mask: If not None, this list will be used to mask the input files.
+        Useful for creating a train and validation set. Default = ``None``.
+    :param pred_months: The months the model should predict. If None, all months are predicted.
+        Default = ``None``.
+    :param to_tensor: Whether to turn the np.ndarrays into torch.Tensors. Default = ``False``.
+    :param surrounding_pixels: How many surrounding pixels to add to the input data.
+        e.g. if the input is 1, then in addition to the pixels on the prediction point,
+        the neighbouring (spatial) pixels will be included too, up to a distance of one pixel away.
+        Default = ``None``.
+    :param ignore_vars: A list of variables to ignore. If None, all variables in the data_path will
+        be included. Default = ``None``.
+    :param monthly_aggs: Whether to include the monthly aggregates (mean and std across all spatial values)
+        for the input variables. These will be additional dimensions to the historical
+        (and optionally current) arrays. Default = ``True``.
+    :param static: Whether to include static data. Default = ``True``.
+    :param predict_delta: Whether to predict the change in the target variable relative to the
+        previous timestep instead of the raw target variable. Default = ``True``.
+    :param normalize_y: Whether to normalize y. Default = ``True``.
     """
 
     def __init__(

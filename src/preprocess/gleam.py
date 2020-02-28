@@ -7,10 +7,14 @@ from .base import BasePreProcessor
 
 
 class GLEAMPreprocessor(BasePreProcessor):
-    """Preprocess the GLEAM data
-    """
+    r"""Preprocess the GLEAM data.
 
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
+    """
     dataset = "gleam"
+
+    def __init__(self, data_folder: Path = Path("data")) -> None:
+        super().__init__(data_folder)
 
     @staticmethod
     def _swap_dims_and_filter(ds: xr.Dataset) -> xr.Dataset:
@@ -55,7 +59,7 @@ class GLEAMPreprocessor(BasePreProcessor):
             netcdf_filepath.name[-3:] == ".nc"
         ), f"filepath name should be a .nc file. Currently: {netcdf_filepath.name}"
 
-        filename = self.create_filename(
+        filename = self._create_filename(
             netcdf_filepath.name,
             subset_name=subset_str if subset_str is not None else None,
         )
@@ -65,7 +69,9 @@ class GLEAMPreprocessor(BasePreProcessor):
         print(f"** Done for GLEAM {netcdf_filepath.name} **")
 
     @staticmethod
-    def create_filename(netcdf_filename: str, subset_name: Optional[str] = None) -> str:
+    def _create_filename(
+        netcdf_filename: str, subset_name: Optional[str] = None
+    ) -> str:
         """
         monthly/E_1980_2018_GLEAM_v3.3a_MO.nc
             =>
@@ -86,23 +92,20 @@ class GLEAMPreprocessor(BasePreProcessor):
         upsampling: bool = False,
         cleanup: bool = True,
     ) -> None:
-        """ Preprocess all of the GLEAM .nc files to produce
+        r"""Preprocess all of the GLEAM .nc files to produce
         one subset file.
 
         Arguments
         ----------
-        subset_str: Optional[str] = 'kenya'
-            Whether to subset Kenya when preprocessing
-        regrid: Optional[Path] = None
-            If a Path is passed, the CHIRPS files will be regridded to have the same
-            grid as the dataset at that Path. If None, no regridding happens
-        resample_time: str = 'M'
-            If not None, defines the time length to which the data will be resampled
-        upsampling: bool = False
-            If true, tells the class the time-sampling will be upsampling. In this case,
-            nearest instead of mean is used for the resampling
-        cleanup: bool = True
-            If true, delete interim files created by the class
+        :param subset_str: The optional subset string used to get a geographical subset of the data.
+            Only used to make a more descriptive filename.
+        :param regrid: If a Path is passed, the output files will be regridded to have the same
+            spatial grid as the dataset at that Path. If None, no regridding happens. Default = ``None``.
+        :param resample_time: Defines the time length to which the data will be resampled. If ``None``,
+            no time-resampling happens. Default = ``"M"`` (monthly).
+        :param upsampling: If true, tells the class the time-sampling will be upsampling. In this case,
+            nearest instead of mean is used for the resampling. Default = ``False``.
+        :param cleanup: If true, delete interim files created by the class. Default = ``True``.
         """
         print(f"Reading data from {self.raw_folder}. Writing to {self.interim}")
 

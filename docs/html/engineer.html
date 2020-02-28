@@ -14,8 +14,8 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Datasets" href="datasets.html" />
-    <link rel="prev" title="Preprocessor" href="preprocessor.html" /> 
+    <link rel="next" title="Dataloader" href="dataloader.html" />
+    <link rel="prev" title="Datasets" href="datasets.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,10 +27,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="datasets.html" title="Datasets"
+          <a href="dataloader.html" title="Dataloader"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="preprocessor.html" title="Preprocessor"
+          <a href="datasets.html" title="Datasets"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
       </ul>
@@ -46,6 +46,9 @@
 <p>The engineer class works to create <em>train</em> and <em>test</em> data. It reads in processed
 data, and writes out <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">y)</span></code> pairs. This class allows the nature of the input
 and output variables to be defined.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">y)</span></code> pairs saved by the engineer are grouped by prediction month (i.e.
+a single <code class="docutils literal notranslate"><span class="pre">NetCDF</span></code> file is written for each prediction month, both for the train and
+test data.</p>
 <hr class="docutils" />
 <span class="target" id="module-src.engineer"></span><dl class="class">
 <dt id="src.engineer.Engineer">
@@ -103,9 +106,17 @@ Default: <code class="docutils literal notranslate"><span class="pre">12</span><
 <li class="toctree-l1"><a class="reference internal" href="data.html">The data directory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Engineer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Engineer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataloader.html">Dataloader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models/persistence.html">Persistence</a></li>
 </ul>
 </li>
 </ul>
@@ -141,10 +152,10 @@ Default: <code class="docutils literal notranslate"><span class="pre">12</span><
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="datasets.html" title="Datasets"
+          <a href="dataloader.html" title="Dataloader"
              >next</a> |</li>
         <li class="right" >
-          <a href="preprocessor.html" title="Preprocessor"
+          <a href="datasets.html" title="Datasets"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ml_clim  documentation</a> &#187;</li> 
       </ul>

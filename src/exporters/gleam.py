@@ -8,10 +8,10 @@ paramiko = None
 
 
 class GLEAMExporter(BaseExporter):
-    """Download data from the Global Land Evaporation Amsterdam Model
-    (gleam.eu)
+    r"""Download data from the
+    `Global Land Evaporation Amsterdam Model <gleam.eu>`_.
 
-    Access information can be found at gleam.eu
+    :param data_folder: The location of the data folder. Default: ``pathlib.Path("data")``
     """
 
     dataset = "gleam"
@@ -34,6 +34,10 @@ class GLEAMExporter(BaseExporter):
         self.base_sftp_path: str = "/data/v3.3a/"
 
     def get_granularities(self) -> List[str]:
+        r"""Get acceptable data granularities.
+
+        :return: A list of granularities.
+        """
         self.sftp.chdir(self.base_sftp_path)
         return self.sftp.listdir()
 
@@ -77,6 +81,12 @@ class GLEAMExporter(BaseExporter):
         return self.output_folder / stem[: -len(filename)].strip("/"), filename
 
     def export(self, variables: Union[str, List[str]], granularity: str) -> None:
+        r"""Run the exporter.
+
+        :param variables: A variable or list of variables to download.
+        :param granularity: The granularity of data to be downloaded. Use ``get_granularities`` to
+            get a list of acceptable granularities.
+        """
 
         acceptable_granularities = set(self.get_granularities())
         assert granularity in acceptable_granularities, (
