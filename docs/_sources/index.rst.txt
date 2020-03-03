@@ -40,7 +40,7 @@ For more information, see:
    datasets
    engineer
    dataloader
-   models/models
+   models
 
 .. * :ref:`search`
 .. * :ref:`genindex`

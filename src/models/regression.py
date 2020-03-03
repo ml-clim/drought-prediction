@@ -16,6 +16,40 @@ from .data import DataLoader, train_val_mask, TrainData
 
 class LinearRegression(ModelBase):
 
+    r"""A linear regression model, implemented by
+    `scikit-learn <https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDRegressor.html#sklearn.linear_model.SGDRegressor>`_.
+
+    :param data_folder: Location of the data folder. Default = ``pathlib.Path("data")``.
+    :param experiment: The name of the experiment to run. Specifically, the name of the engineer
+        used to generate the data. Default = ``"one_month_forecast"``
+        (train on only historical data and predict one month ahead)
+    :param batch_size: The number of files to load at once. These will be chunked and
+        shuffled, so a higher value will lead to better shuffling
+        (but will require more memory). Default = ``1``.
+    :param pred_months: The months the model should predict. If None, all months are predicted.
+        Default = ``None``.
+    :param include_pred_month: Whether to include the prediction month to the model's training data.
+        Default = ``True``.
+    :param include_latlons: Whether to include prediction pixel latitudes and longitudes in the model's
+        training data. Default = ``True``.
+    :param include_monthly_aggs: Whether to include monthly aggregations. Default = ``True``.
+    :param include_yearly_aggs: Whether to include yearly aggregations. Default = ``True``.
+    :param surrounding_pixels: How many surrounding pixels to add to the input data. e.g. if the input
+        is 1, then in addition to the pixels on the prediction point, the neighbouring (spatial) pixels will
+        be included too, up to a distance of one pixel away. Default = ``None``.
+    :param ignore_vars: A list of variables to ignore. If None, all variables in the data_path will be included.
+        Default = ``None``.
+    :param static: Whether to include static data. Default = ``True``.
+    :param predict_delta: Whether to model the change in target variable rather than the
+        raw values. Default = ``False``.
+    :param spatial_mask: If an ``xr.DataArray` is passed, it will be used to mask the training / test data.
+        Default = ``None``.
+    :param include_pred_y: Whether to include the y value from one year ago, the same month. This is useful if
+        you are predicting a seasonal value. Default = ``False``.
+    :param normalize_y: Whether to normalize the y value being predicted. Default = ``False``. The predictions
+        saved in ``evaluate`` will be denormalized.
+    """
+
     model_name = "linear_regression"
 
     def __init__(
@@ -64,6 +98,18 @@ class LinearRegression(ModelBase):
         val_split: float = 0.1,
         initial_learning_rate: float = 1e-15,
     ) -> None:
+        r"""Train the linear regression model.
+
+        :param num_epochs: The number of epochs to train the model for. If
+            ``early_stopping`` is not None, then this is the **maximum** number of
+            epochs for which the model will be trained. Default = ``1``.
+        :param early_stopping: If not ``None``, the number of epochs to wait without
+            improvement before stopping model training and reverting to the best model.
+            Default = ``None``.
+        :param batch_size: The batch size to use when training the model. Default = ``256``.
+        :param val_split: The ratio of data to use in the validation set. Default = ``0.1``.
+        :param initial_learning_rate: The initial learning rate to use. Default = ``1e-15``.
+        """
         print(f"Training {self.model_name} for experiment {self.experiment}")
 
         if early_stopping is not None:
@@ -169,6 +215,9 @@ class LinearRegression(ModelBase):
         return explanations
 
     def save_model(self) -> None:
+        r"""Saves a pickle object of the model, which can be loaded using
+        ``src.models.load_model``.
+        """
 
         assert self.model is not None, "Model must be trained!"
 

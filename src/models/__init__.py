@@ -28,25 +28,16 @@ def load_model(
 ) -> Union[RecurrentNetwork, LinearNetwork, LinearRegression, EARecurrentNetwork, GBDT]:
     """
     This function loads models from the output `.pkl` files generated when
-    calling model.save()
+    calling model.save_model()
 
-    Arguments
-    ----------
-    model_path: Path
-        The path to the model
-    data_path: Optional[Path] = None
-        The path to the data folder. If None, the function infers this from the
-        model_path (assuming it was saved as part of the pipeline)
-    model_type: Optional[str] = None
-        The type of model to load. If None, the function infers this from the
-        model_path (assuming it was saved as part of the pipeline)
-    device: str
-        The device to load the model onto
+    :param model_path: The path to the model
+    :param data_path: The path to the data folder. If None, the function infers this from the
+        model_path (assuming it was saved as part of the pipeline). Default = ``None``.
+    :param model_type: The type of model to load. If None, the function infers this from the
+        model_path (assuming it was saved as part of the pipeline). Default = ``None``.
+    :param device: The device to load the model onto
 
-    Returns
-    ----------
-    model: Union[RecurrentNetwork, LinearNetwork, LinearRegression]
-        A model object loaded from the model_path
+    :returns: A model object loaded from the model_path
     """
 
     str_to_model = {

@@ -19,6 +19,9 @@ class ModelBase:
     :param batch_size: The number of files to load at once. These will be chunked and
         shuffled, so a higher value will lead to better shuffling
         (but will require more memory). Default = ``1``.
+    :param experiment: The name of the experiment to run. Specifically, the name of the engineer
+        used to generate the data. Default = ``"one_month_forecast"``
+        (train on only historical data and predict one month ahead)
     :param pred_months: The months the model should predict. If None, all months are predicted.
         Default = ``None``.
     :param include_pred_month: Whether to include the prediction month to the model's training data.
