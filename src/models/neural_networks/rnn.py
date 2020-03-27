@@ -12,6 +12,22 @@ from .base import NNBase
 
 
 class RecurrentNetwork(NNBase):
+    r"""
+    A single layer long short-term memory (LSTM) layer, followed by linear layers.
+
+    See `this blog post <http://colah.github.io/posts/2015-08-Understanding-LSTMs/>`_ for more
+    information about recurrent networks and LSTMS.
+
+    The LSTM receives the static data appended to every time step of the dynamic data. In addition to
+    the arguments to ``ModelBase``, the LSTM has the following arguments passed to the constructor:
+
+    :param hidden_size: The number of features in the hidden state
+    :param dense_features: A list describing the linear layers after the LSTM layer. There will be
+        a layer per element in the list, with output size equal to the value of the element. If ``None``,
+        a single linear layer is used, with an output size of 1 (the prediction).
+    :param rnn_dropout: Dropout to use **between** timesteps. Note that this is different from PyTorch's
+        default LSTM layer, which adds dropout between layers, not timesteps.
+    """
 
     model_name = "rnn"
 

@@ -205,8 +205,8 @@ Default = <code class="docutils literal notranslate"><span class="pre">None</spa
 <li><p><strong>static</strong> – Whether to include static data. Default = <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 <li><p><strong>predict_delta</strong> – Whether to model the change in target variable rather than the
 raw values. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>spatial_mask</strong> – If an <code class="docutils literal notranslate"><span class="pre">xr.DataArray`</span> <span class="pre">is</span> <span class="pre">passed,</span> <span class="pre">it</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">mask</span> <span class="pre">the</span> <span class="pre">training</span> <span class="pre">/</span> <span class="pre">test</span> <span class="pre">data.</span>
-<span class="pre">Default</span> <span class="pre">=</span> <span class="pre">``None</span></code>.</p></li>
+<li><p><strong>spatial_mask</strong> – If an <code class="docutils literal notranslate"><span class="pre">xr.DataArray</span></code> is passed, it will be used to mask the training / test data.
+Default = <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>include_pred_y</strong> – Whether to include the y value from one year ago, the same month. This is useful if
 you are predicting a seasonal value. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>normalize_y</strong> – Whether to normalize the y value being predicted. Default = <code class="docutils literal notranslate"><span class="pre">False</span></code>. The predictions
@@ -260,6 +260,137 @@ Default = <code class="docutils literal notranslate"><span class="pre">None</spa
 </dd></dl>
 
 </div>
+<div class="section" id="neural-networks">
+<h2>Neural Networks<a class="headerlink" href="#neural-networks" title="Permalink to this headline">¶</a></h2>
+<p>A number of neural networks are implemented.
+All are trained using <a class="reference external" href="https://pytorch.org/docs/stable/nn.html?highlight=smooth%20l1%20loss#torch.nn.SmoothL1Loss">Smooth L1 Loss</a>,
+with optional early stopping.</p>
+<p>All neural network classes extend the following base class:</p>
+<dl class="class">
+<dt id="src.models.neural_networks.base.NNBase">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.neural_networks.base.</code><code class="sig-name descname">NNBase</code><span class="sig-paren">(</span><em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">experiment: str = 'one_month_forecast'</em>, <em class="sig-param">pred_months: Optional[List[int]] = None</em>, <em class="sig-param">include_pred_month: bool = True</em>, <em class="sig-param">include_latlons: bool = False</em>, <em class="sig-param">include_monthly_aggs: bool = True</em>, <em class="sig-param">include_yearly_aggs: bool = True</em>, <em class="sig-param">surrounding_pixels: Optional[int] = None</em>, <em class="sig-param">ignore_vars: Optional[List[str]] = None</em>, <em class="sig-param">static: Optional[str] = 'features'</em>, <em class="sig-param">device: str = 'cuda:0'</em>, <em class="sig-param">predict_delta: bool = False</em>, <em class="sig-param">spatial_mask: Union[xarray.core.dataarray.DataArray</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">include_prev_y: bool = True</em>, <em class="sig-param">normalize_y: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.neural_networks.base.NNBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>The base for all neural network models, written in Pytorch. It extends
+the <code class="docutils literal notranslate"><span class="pre">ModelBase</span></code> class, and implements the <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">predict</span></code> and <code class="docutils literal notranslate"><span class="pre">explain</span></code>
+functions, which are shared across all neural networks.</p>
+<p>The arguments to the constructor are the same as for the <code class="docutils literal notranslate"><span class="pre">ModelBase</span></code> class.</p>
+<dl class="method">
+<dt id="src.models.neural_networks.base.NNBase.explain">
+<code class="sig-name descname">explain</code><span class="sig-paren">(</span><em class="sig-param">x: Optional[src.models.data.TrainData] = None</em>, <em class="sig-param">var_names: Optional[List[str]] = None</em>, <em class="sig-param">save_explanations: bool = True</em>, <em class="sig-param">background_size: int = 100</em>, <em class="sig-param">start_idx: int = 0</em>, <em class="sig-param">num_inputs: int = 10</em>, <em class="sig-param">method: str = 'shap'</em><span class="sig-paren">)</span> &#x2192; src.models.data.TrainData<a class="headerlink" href="#src.models.neural_networks.base.NNBase.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expain the outputs of a trained model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – The values to explain. If None, samples are randomly drawn from
+the test data</p></li>
+<li><p><strong>var_names</strong> – The variable names of the historical inputs. If x is None, this
+will be calculated. Only necessary if the arrays are going to be saved</p></li>
+<li><p><strong>save_explanations</strong> – Whether or not to save the shap values</p></li>
+<li><p><strong>background_size</strong> – the size of the background to use</p></li>
+<li><p><strong>start_idx</strong> – The index to use to calculate the shap values. Shap values will be
+calculated for <code class="docutils literal notranslate"><span class="pre">x[start_idx:</span> <span class="pre">start_idx</span> <span class="pre">+</span> <span class="pre">num_inputs]</span></code></p></li>
+<li><p><strong>num_inputs</strong> – The number of datapoints to calculate shap values for</p></li>
+<li><p><strong>method</strong> – One of <code class="docutils literal notranslate"><span class="pre">{&quot;shap&quot;,</span> <span class="pre">&quot;morris&quot;}</span></code>. The method to use to calculate the
+explanations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of shap values for each of the model’s input arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.models.neural_networks.base.NNBase.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">num_epochs: int = 1</em>, <em class="sig-param">early_stopping: Optional[int] = None</em>, <em class="sig-param">batch_size: int = 256</em>, <em class="sig-param">learning_rate: float = 0.001</em>, <em class="sig-param">val_split: float = 0.1</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#src.models.neural_networks.base.NNBase.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains a neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_epochs</strong> – The maximum number of epochs to train the model for.</p></li>
+<li><p><strong>early_stopping</strong> – If an int is passed, early stopping will be used with this
+value as the patience. If None, the model will train for <code class="docutils literal notranslate"><span class="pre">num_epochs</span></code>.</p></li>
+<li><p><strong>batch_size</strong> – The number of instances to put in each batch.</p></li>
+<li><p><strong>learning_rate</strong> – The learning rate to use.</p></li>
+<li><p><strong>val_split</strong> – The ratio of training data to use as validation, for early stopping.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="lstm">
+<h3>LSTM<a class="headerlink" href="#lstm" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="src.models.neural_networks.rnn.RecurrentNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.neural_networks.rnn.</code><code class="sig-name descname">RecurrentNetwork</code><span class="sig-paren">(</span><em class="sig-param">hidden_size: int</em>, <em class="sig-param">dense_features: Optional[List[int]] = None</em>, <em class="sig-param">rnn_dropout: float = 0.25</em>, <em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">experiment: str = 'one_month_forecast'</em>, <em class="sig-param">pred_months: Optional[List[int]] = None</em>, <em class="sig-param">include_pred_month: bool = True</em>, <em class="sig-param">include_latlons: bool = False</em>, <em class="sig-param">include_monthly_aggs: bool = True</em>, <em class="sig-param">include_yearly_aggs: bool = True</em>, <em class="sig-param">surrounding_pixels: Optional[int] = None</em>, <em class="sig-param">ignore_vars: Optional[List[str]] = None</em>, <em class="sig-param">static: Optional[str] = 'features'</em>, <em class="sig-param">device: str = 'cuda:0'</em>, <em class="sig-param">predict_delta: bool = False</em>, <em class="sig-param">spatial_mask: Union[xarray.core.dataarray.DataArray</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">include_prev_y: bool = True</em>, <em class="sig-param">normalize_y: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.neural_networks.rnn.RecurrentNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single layer long short-term memory (LSTM) layer, followed by linear layers.</p>
+<p>See <a class="reference external" href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">this blog post</a> for more
+information about recurrent networks and LSTMS.</p>
+<p>The LSTM receives the static data appended to every time step of the dynamic data. In addition to
+the arguments to <code class="docutils literal notranslate"><span class="pre">ModelBase</span></code>, the LSTM has the following arguments passed to the constructor:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hidden_size</strong> – The number of features in the hidden state</p></li>
+<li><p><strong>dense_features</strong> – A list describing the linear layers after the LSTM layer. There will be
+a layer per element in the list, with output size equal to the value of the element. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+a single linear layer is used, with an output size of 1 (the prediction).</p></li>
+<li><p><strong>rnn_dropout</strong> – Dropout to use <strong>between</strong> timesteps. Note that this is different from PyTorch’s
+default LSTM layer, which adds dropout between layers, not timesteps.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="ea-lstm">
+<h3>EA-LSTM<a class="headerlink" href="#ea-lstm" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="src.models.neural_networks.ealstm.EARecurrentNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.neural_networks.ealstm.</code><code class="sig-name descname">EARecurrentNetwork</code><span class="sig-paren">(</span><em class="sig-param">hidden_size: int</em>, <em class="sig-param">dense_features: Optional[List[int]] = None</em>, <em class="sig-param">rnn_dropout: float = 0.25</em>, <em class="sig-param">data_folder: pathlib.Path = PosixPath('data')</em>, <em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">experiment: str = 'one_month_forecast'</em>, <em class="sig-param">pred_months: Optional[List[int]] = None</em>, <em class="sig-param">include_latlons: bool = False</em>, <em class="sig-param">include_pred_month: bool = True</em>, <em class="sig-param">include_monthly_aggs: bool = True</em>, <em class="sig-param">include_yearly_aggs: bool = True</em>, <em class="sig-param">surrounding_pixels: Optional[int] = None</em>, <em class="sig-param">ignore_vars: Optional[List[str]] = None</em>, <em class="sig-param">static: Optional[str] = 'features'</em>, <em class="sig-param">static_embedding_size: Optional[int] = None</em>, <em class="sig-param">device: str = 'cuda:0'</em>, <em class="sig-param">predict_delta: bool = False</em>, <em class="sig-param">spatial_mask: Union[xarray.core.dataarray.DataArray</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">include_prev_y: bool = True</em>, <em class="sig-param">normalize_y: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.neural_networks.ealstm.EARecurrentNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Entity Aware - LSTM, described in
+<a class="reference external" href="https://www.hydrol-earth-syst-sci.net/23/5089/2019/hess-23-5089-2019.html">Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets</a></p>
+<p>In an EA-LSTM, the dynamic features are conditioned on the static features.</p>
+<p>In addition to the arguments to <code class="docutils literal notranslate"><span class="pre">ModelBase</span></code>, the EA-LSTM has the following arguments
+passed to the constructor:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hidden_size</strong> – The number of features in the hidden state</p></li>
+<li><p><strong>dense_features</strong> – A list describing the linear layers after the LSTM layer. There will be
+a layer per element in the list, with output size equal to the value of the element. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+a single linear layer is used, with an output size of 1 (the prediction).</p></li>
+<li><p><strong>rnn_dropout</strong> – Dropout to use <strong>between</strong> timesteps. Note that this is different from PyTorch’s
+default LSTM layer, which adds dropout between layers, not timesteps.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="linear-network">
+<h3>Linear Network<a class="headerlink" href="#linear-network" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="src.models.neural_networks.linear_network.LinearNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">src.models.neural_networks.linear_network.</code><code class="sig-name descname">LinearNetwork</code><span class="sig-paren">(</span><em class="sig-param">layer_sizes: Union[int, List[int]], dropout: float = 0.25, data_folder: pathlib.Path = PosixPath('data'), batch_size: int = 1, experiment: str = 'one_month_forecast', pred_months: Optional[List[int]] = None, include_pred_month: bool = True, include_latlons: bool = False, include_monthly_aggs: bool = True, include_yearly_aggs: bool = True, surrounding_pixels: Optional[int] = None, ignore_vars: Optional[List[str]] = None, static: Optional[str] = 'features', device: str = 'cuda:0', predict_delta: bool = False, spatial_mask: Union[xarray.core.dataarray.DataArray, pathlib.Path] = None, include_prev_y: bool = True, normalize_y: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.models.neural_networks.linear_network.LinearNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>A linear neural network.</p>
+<p>In addition to <code class="docutils literal notranslate"><span class="pre">ModelBase</span></code>, the linear network has the following arguments
+passed to the constructor:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer_sizes</strong> – A list describing the linear layers after the LSTM layer. There will be
+a layer per element in the list, with output size equal to the value of the element. If an
+<code class="docutils literal notranslate"><span class="pre">int</span></code> is passed, the model will only have one hidden layer.</p></li>
+<li><p><strong>dropout</strong> – The dropout value to use between layers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
 </div>
 
 
@@ -279,7 +410,10 @@ Default = <code class="docutils literal notranslate"><span class="pre">None</spa
 <li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#era5-era5-land-monthly-averaged-data">ERA5 / ERA5 Land monthly averaged data</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
@@ -291,6 +425,12 @@ Default = <code class="docutils literal notranslate"><span class="pre">None</spa
 <li class="toctree-l2"><a class="reference internal" href="#loading-models">Loading models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#persistence">Persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#linear-regression">Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#neural-networks">Neural Networks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lstm">LSTM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ea-lstm">EA-LSTM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linear-network">Linear Network</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

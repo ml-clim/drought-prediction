@@ -18,6 +18,13 @@ from ..data import DataLoader, train_val_mask, TrainData, idx_to_input
 
 
 class NNBase(ModelBase):
+    r"""The base for all neural network models, written in Pytorch. It extends
+    the ``ModelBase`` class, and implements the ``train``, ``predict`` and ``explain``
+    functions, which are shared across all neural networks.
+
+    The arguments to the constructor are the same as for the ``ModelBase`` class.
+    """
+
     def __init__(
         self,
         data_folder: Path = Path("data"),
@@ -85,6 +92,16 @@ class NNBase(ModelBase):
         learning_rate: float = 1e-3,
         val_split: float = 0.1,
     ) -> None:
+        r"""
+        Trains a neural network.
+
+        :param num_epochs: The maximum number of epochs to train the model for.
+        :param early_stopping: If an int is passed, early stopping will be used with this
+            value as the patience. If None, the model will train for ``num_epochs``.
+        :param batch_size: The number of instances to put in each batch.
+        :param learning_rate: The learning rate to use.
+        :param val_split: The ratio of training data to use as validation, for early stopping.
+        """
         print(f"Training {self.model_name} for experiment {self.experiment}")
 
         if early_stopping is not None:
@@ -342,18 +359,19 @@ class NNBase(ModelBase):
         """
         Expain the outputs of a trained model.
 
-        Arguments
-        ----------
-        x: The values to explain. If None, samples are randomly drawn from
+        :param x: The values to explain. If None, samples are randomly drawn from
             the test data
-        var_names: The variable names of the historical inputs. If x is None, this
+        :param var_names: The variable names of the historical inputs. If x is None, this
             will be calculated. Only necessary if the arrays are going to be saved
-        background_size: the size of the background to use
-        save_shap_values: Whether or not to save the shap values
+        :param save_explanations: Whether or not to save the shap values
+        :param background_size: the size of the background to use
+        :param start_idx: The index to use to calculate the shap values. Shap values will be
+            calculated for ``x[start_idx: start_idx + num_inputs]``
+        :param num_inputs: The number of datapoints to calculate shap values for
+        :param method: One of ``{"shap", "morris"}``. The method to use to calculate the
+            explanations.
 
-        Returns
-        ----------
-        shap_dict: A dictionary of shap values for each of the model's input arrays
+        :returns: A dictionary of shap values for each of the model's input arrays
         """
 
         assert self.model is not None, "Model must be trained!"

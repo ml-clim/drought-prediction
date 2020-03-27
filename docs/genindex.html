@@ -45,6 +45,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
@@ -88,6 +89,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#src.models.neural_networks.ealstm.EARecurrentNetwork">EARecurrentNetwork (class in src.models.neural_networks.ealstm)</a>
+</li>
       <li><a href="engineer.html#src.engineer.Engineer">Engineer (class in src.engineer)</a>
 </li>
       <li><a href="engineer.html#src.engineer.Engineer.engineer">engineer() (src.engineer.Engineer method)</a>
@@ -103,6 +106,8 @@
       <li><a href="models.html#src.models.base.ModelBase.explain">explain() (src.models.base.ModelBase method)</a>
 
       <ul>
+        <li><a href="models.html#src.models.neural_networks.base.NNBase.explain">(src.models.neural_networks.base.NNBase method)</a>
+</li>
         <li><a href="models.html#src.models.regression.LinearRegression.explain">(src.models.regression.LinearRegression method)</a>
 </li>
       </ul></li>
@@ -138,6 +143,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#src.models.neural_networks.linear_network.LinearNetwork">LinearNetwork (class in src.models.neural_networks.linear_network)</a>
+</li>
       <li><a href="models.html#src.models.regression.LinearRegression">LinearRegression (class in src.models.regression)</a>
 </li>
   </ul></td>
@@ -157,6 +164,14 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#src.models.base.ModelBase">ModelBase (class in src.models.base)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#src.models.neural_networks.base.NNBase">NNBase (class in src.models.neural_networks.base)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -182,6 +197,10 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#src.models.neural_networks.rnn.RecurrentNetwork">RecurrentNetwork (class in src.models.neural_networks.rnn)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="preprocessor.html#src.preprocess.base.BasePreProcessor.regrid">regrid() (src.preprocess.base.BasePreProcessor method)</a>
 </li>
   </ul></td>
@@ -206,9 +225,11 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models.html#src.models.parsimonious.Persistence.train">train() (src.models.parsimonious.Persistence method)</a>
+      <li><a href="models.html#src.models.neural_networks.base.NNBase.train">train() (src.models.neural_networks.base.NNBase method)</a>
 
       <ul>
+        <li><a href="models.html#src.models.parsimonious.Persistence.train">(src.models.parsimonious.Persistence method)</a>
+</li>
         <li><a href="models.html#src.models.regression.LinearRegression.train">(src.models.regression.LinearRegression method)</a>
 </li>
       </ul></li>
@@ -233,7 +254,10 @@
 <li class="toctree-l1"><a class="reference internal" href="exporters.html">Exporters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessor.html">Preprocessor</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#climate-data-store">Climate Data Store</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#era5-era5-land-monthly-averaged-data">ERA5 / ERA5 Land monthly averaged data</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#chirps-rainfall-estimates">CHIRPS Rainfall Estimates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#srtm-digital-elevation-data">SRTM Digital Elevation Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datasets.html#global-land-evaporation-amsterdam-model">Global Land Evaporation Amsterdam Model</a></li>
@@ -245,6 +269,12 @@
 <li class="toctree-l2"><a class="reference internal" href="models.html#loading-models">Loading models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#persistence">Persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#linear-regression">Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#neural-networks">Neural Networks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#lstm">LSTM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#ea-lstm">EA-LSTM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#linear-network">Linear Network</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

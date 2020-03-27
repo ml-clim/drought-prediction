@@ -12,6 +12,22 @@ from .base import NNBase
 
 class EARecurrentNetwork(NNBase):
 
+    r"""
+    An Entity Aware - LSTM, described in
+    `Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets <https://www.hydrol-earth-syst-sci.net/23/5089/2019/hess-23-5089-2019.html>`_
+
+    In an EA-LSTM, the dynamic features are conditioned on the static features.
+
+    In addition to the arguments to ``ModelBase``, the EA-LSTM has the following arguments
+    passed to the constructor:
+
+    :param hidden_size: The number of features in the hidden state
+    :param dense_features: A list describing the linear layers after the LSTM layer. There will be
+        a layer per element in the list, with output size equal to the value of the element. If ``None``,
+        a single linear layer is used, with an output size of 1 (the prediction).
+    :param rnn_dropout: Dropout to use **between** timesteps. Note that this is different from PyTorch's
+        default LSTM layer, which adds dropout between layers, not timesteps.
+    """
     model_name = "ealstm"
 
     def __init__(

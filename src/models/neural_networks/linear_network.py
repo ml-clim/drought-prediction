@@ -11,6 +11,18 @@ from .base import NNBase
 
 class LinearNetwork(NNBase):
 
+    r"""
+    A linear neural network.
+
+    In addition to ``ModelBase``, the linear network has the following arguments
+    passed to the constructor:
+
+    :param layer_sizes: A list describing the linear layers after the LSTM layer. There will be
+        a layer per element in the list, with output size equal to the value of the element. If an
+        ``int`` is passed, the model will only have one hidden layer.
+    :param dropout: The dropout value to use between layers.
+    """
+
     model_name = "linear_network"
 
     def __init__(

@@ -42,7 +42,7 @@ class LinearRegression(ModelBase):
     :param static: Whether to include static data. Default = ``True``.
     :param predict_delta: Whether to model the change in target variable rather than the
         raw values. Default = ``False``.
-    :param spatial_mask: If an ``xr.DataArray` is passed, it will be used to mask the training / test data.
+    :param spatial_mask: If an ``xr.DataArray`` is passed, it will be used to mask the training / test data.
         Default = ``None``.
     :param include_pred_y: Whether to include the y value from one year ago, the same month. This is useful if
         you are predicting a seasonal value. Default = ``False``.
