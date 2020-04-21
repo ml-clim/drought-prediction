@@ -2,7 +2,7 @@ from pathlib import Path
 import xarray as xr
 import numpy as np
 
-from typing import List, Optional
+from typing import List, Optional, Union, Tuple
 
 from ..utils import Region, region_lookup
 from .utils import select_bounding_box
@@ -13,20 +13,19 @@ xesmf = None
 
 
 class BasePreProcessor:
-    r"""Base for all pre-processor classes. The preprocessing classes
+    """Base for all pre-processor classes. The preprocessing classes
     are responsible for taking the raw data exports and normalizing them
     so that they can be ingested by the feature engineering class.
-
     This involves:
+    - subsetting the ROI (default is Kenya)
+    - regridding to a consistent spatial grid (pixel size / resolution)
+    - resampling to a consistent time step (hourly, daily, monthly)
+    - assigning coordinates to `.nc` files (latitude, longitude, time)
 
-    * subsetting the ROI (default is Kenya)
-    * regridding to a consistent spatial grid (pixel size / resolution)
-    * resampling to a consistent time step (hourly, daily, monthly)
-    * assigning coordinates to `.nc` files (latitude, longitude, time)
-
-    All pre-processors should do this in a ``process`` function.
-
-    :param data_folder: The location of the data folder. Default = ``Path("data")``.
+    Attributes:
+    ----------
+    data_folder: Path, default: Path('data')
+        The location of the data folder.
     """
 
     dataset: str
@@ -94,17 +93,16 @@ class BasePreProcessor:
         reuse_weights: bool = False,
         clean: bool = True,
     ) -> xr.Dataset:
-        r""" Use xEMSF package to regrid ds to the same grid as reference_ds
+        """ Use xEMSF package to regrid ds to the same grid as reference_ds
 
-        :param ds: The dataset to be regridded
-        :param reference_ds: The reference dataset, onto which `ds` will be regridded
-        :param method: One of ``{"bilinear", "conservative", "nearest_s2d", "nearest_d2s", "patch"}``.
+        Arguments:
+        ----------
+        ds: xr.Dataset
+            The dataset to be regridded
+        reference_ds: xr.Dataset
+            The reference dataset, onto which `ds` will be regridded
+        method: str, {'bilinear', 'conservative', 'nearest_s2d', 'nearest_d2s', 'patch'}
             The method applied for the regridding
-        :param reuse_weights: Whether to reuse the weights (weights must already be saved).
-            May speed up the regridder. Default = ``False``.
-        :param clean: Whether to delete the weight file. Default = ``True``.
-
-        :return: The regridded dataset.
         """
 
         assert ("lat" in reference_ds.dims) & (
@@ -151,7 +149,7 @@ class BasePreProcessor:
         savedir = self.preprocessed_folder / filename
 
         regridder = xesmf.Regridder(  # type: ignore
-            ds, ds_out, method, filename=str(savedir), reuse_weights=reuse_weights
+            ds, ds_out, method, filename=str(savedir), reuse_weights=False
         )
 
         variables = [v for v in ds.data_vars]
@@ -173,13 +171,10 @@ class BasePreProcessor:
 
     @staticmethod
     def load_reference_grid(path_to_grid: Path) -> xr.Dataset:
-        r"""Since the regridder only needs to the lat and lon values,
+        """Since the regridder only needs to the lat and lon values,
         there is no need to pass around an enormous grid for the regridding.
 
         In fact, only the latitude and longitude values are necessary!
-
-        :param path_to_grid: A path to the reference dataset.
-        :returns: The loaded reference dataset, but with only the latitudes and longitudes.
         """
         full_dataset = xr.open_dataset(path_to_grid)
 
@@ -198,24 +193,37 @@ class BasePreProcessor:
         # TODO: would be nice to programmatically get upsampling / not
         ds = ds.sortby(time_coord)
 
-        resampler = ds.resample({time_coord: resample_length})
-
-        if not upsampling:
-            return resampler.mean()
+        if resample_length == "DEKAD":
+            # https://stackoverflow.com/questions/15408156/resampling-with-custom-periods
+            # https://stackoverflow.com/a/15409033/9940782
+            # assert False, "Need to TEST/implement this functionality"
+            d = (
+                ds[f"{time_coord}.day"]
+                - np.clip((ds[f"{time_coord}.day"] - 1) // 10, 0, 2) * 10
+                - 1
+            )
+            d = d.astype("timedelta64[D]")
+            date = d.time.values - d
+            resampler = ds.groupby(date)
+            if not upsampling:
+                return resampler.mean(dim=time_coord).rename({"day": time_coord})
+            else:
+                return resampler.nearest()
         else:
-            return resampler.nearest()
+            resampler = ds.resample({time_coord: resample_length})
+
+            if not upsampling:
+                return resampler.mean()
+            else:
+                return resampler.nearest()
 
     @staticmethod
     def chop_roi(
         ds: xr.Dataset, subset_str: Optional[str] = "kenya", inverse_lat: bool = False
     ) -> xr.Dataset:
-        r"""Select a geographical subset of the data, based on a subset string.
-
-        :param ds: The dataset to be subsetted.
-        :param subset_str: Defines a geographical subset of the downloaded data to be used.
-            Should be one of the regions defined in ``src.utils.region_lookup``.
-            Default = ``"kenya"``.
-        :inverse_lat: Whether to inverse the minimum and maximum longitudes. Default = ``False``.
+        """ lookup the region information from the dictionary in
+        `src.utils.region_lookup` and subset the `ds` object based on that
+        region.
         """
         region = region_lookup[subset_str] if subset_str is not None else None
         if region is not None:
@@ -229,18 +237,7 @@ class BasePreProcessor:
         resample_time: Optional[str] = "M",
         upsampling: bool = False,
         filename: Optional[str] = None,
-    ) -> None:
-        r"""Merge multiple interim files into a single preprocessed file. The time resampling happens here,
-        since all the data is necessary to do that.
-
-        :param subset_str: The optional subset string used to get a geographical subset of the data.
-            Only used to make a more descriptive filename.
-        :param resample_time: Defines the time length to which the data will be resampled. If ``None``,
-            no time-resampling happens. Default = ``"M"`` (monthly).
-        :param upsampling: If true, tells the class the time-sampling will be upsampling. In this case,
-            nearest instead of mean is used for the resampling. Default = ``False``.
-        :param filename: Override the default created filename by passing a ``string`` filename here.
-        """
+    ) -> Union[Path, Tuple[Path]]:
 
         ds = xr.open_mfdataset(self.get_filepaths("interim"))
 
@@ -253,3 +250,5 @@ class BasePreProcessor:
 
         ds.to_netcdf(out)
         print(f"\n**** {out} Created! ****\n")
+
+        return out
